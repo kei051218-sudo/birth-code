@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal Policies — BirthCode</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --bg2: #11111a; --bg3: #1a1a28;
+    --gold: #c9a84c; --gold2: #e8c97a; --gold-dim: rgba(201,168,76,0.15);
+    --text: #e8e4d8; --text-dim: #8a8478; --border: rgba(201,168,76,0.2);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+  .container { max-width: 680px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  /* 헤더 */
+  .header { text-align: center; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+  .header a { text-decoration: none; }
+  .logo { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; color: var(--gold2); letter-spacing: 2px; display: block; margin-bottom: 8px; }
+  .header-sub { font-size: 12px; color: var(--text-dim); letter-spacing: 1px; }
+
+  /* 탭 네비게이션 */
+  .tab-nav { display: flex; gap: 4px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: 40px; }
+  .tab-btn { flex: 1; padding: 10px 8px; background: transparent; border: none; border-radius: 9px; color: var(--text-dim); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; text-align: center; letter-spacing: 0.3px; }
+  .tab-btn.active { background: var(--gold-dim); border: 1px solid var(--gold); color: var(--gold2); }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+
+  /* 섹션 */
+  .policy-section { display: none; }
+  .policy-section.active { display: block; }
+  .section-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; color: var(--gold2); margin-bottom: 6px; }
+  .section-date { font-size: 11px; color: var(--text-dim); margin-bottom: 32px; letter-spacing: 0.5px; }
+
+  /* 본문 */
+  .policy-body h3 { font-size: 13px; font-weight: 600; color: var(--gold); margin: 28px 0 10px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .policy-body p { font-size: 14px; color: #c8c4b8; line-height: 1.9; margin-bottom: 12px; }
+  .policy-body ul { padding-left: 20px; margin-bottom: 12px; }
+  .policy-body ul li { font-size: 14px; color: #a8a49a; line-height: 1.9; }
+  .policy-body a { color: var(--gold); text-decoration: none; }
+  .policy-body a:hover { text-decoration: underline; }
+
+  /* 인포 박스 */
+  .info-box { background: rgba(201,168,76,0.05); border: 1px solid rgba(201,168,76,0.15); border-radius: 10px; padding: 16px 20px; margin-top: 32px; }
+  .info-box p { font-size: 13px; color: #a8a49a; line-height: 1.8; margin: 0; }
+  .info-box strong { color: var(--gold); }
+
+  /* 구분선 */
+  .divider { border: none; border-top: 1px solid rgba(255,255,255,0.05); margin: 32px 0; }
+
+  /* 뒤로가기 */
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-dim); text-decoration: none; margin-bottom: 32px; transition: color 0.2s; }
+  .back-link:hover { color: var(--gold2); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <a href="/" class="back-link">← Back to BirthCode</a>
+
+  <div class="header">
+    <a href="/"><span class="logo">BirthCode</span></a>
+    <div class="header-sub">LEGAL POLICIES</div>
+  </div>
+
+  <!-- 탭 네비게이션 -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('terms')">Terms of Service</button>
+    <button class="tab-btn" onclick="showTab('privacy')">Privacy Policy</button>
+    <button class="tab-btn" onclick="showTab('refund')">Refund Policy</button>
+  </div>
+
+  <!-- ===== TERMS OF SERVICE ===== -->
+  <div id="tab-terms" class="policy-section active">
+    <div class="section-title">Terms of Service</div>
+    <div class="section-date">Last updated: March 18, 2026</div>
+    <div class="policy-body">
+
+      <h3>1. Purpose</h3>
+      <p>These Terms of Service govern your use of BirthCode (the "Service"), operated by Artiverse Corporation ("Company", "we", "us"). By accessing or using the Service, you agree to be bound by these Terms.</p>
+
+      <h3>2. Service Description</h3>
+      <p>BirthCode provides AI-powered digital content based on the Korean Four Pillars of Destiny (Saju) system. You provide your date of birth, birth hour, and gender, and our system delivers a personalized written analysis. The Service is provided for entertainment and self-reflection purposes only and does not constitute legal, medical, financial, or psychological advice.</p>
+
+      <h3>3. Eligibility</h3>
+      <p>You must be at least 14 years of age to use the Service. If you are under 18, you confirm that you have obtained parental or guardian consent.</p>
+
+      <h3>4. Payment & Access</h3>
+      <p>Certain features of the Service require a one-time payment. Upon successful payment, access to the purchased content is granted immediately. Payments are processed securely by our payment partner, Paddle. The Company does not store your payment card details.</p>
+
+      <h3>5. Intellectual Property</h3>
+      <p>All content generated by the Service, including analysis reports, is the intellectual property of Artiverse Corporation. You may use your reading for personal reference only. Commercial reproduction, redistribution, or resale of any content is strictly prohibited.</p>
+
+      <h3>6. Disclaimer of Liability</h3>
+      <p>BirthCode is an entertainment service grounded in traditional East Asian philosophy. We make no warranties, express or implied, as to the accuracy, completeness, or fitness for any purpose of the content provided. Your reliance on any analysis is entirely at your own discretion and risk. The Company is not liable for any decisions made based on the content.</p>
+
+      <h3>7. Changes to Terms</h3>
+      <p>We may update these Terms from time to time. Continued use of the Service after changes are posted constitutes acceptance of the revised Terms. We will notify users of material changes via the Service.</p>
+
+      <h3>8. Governing Law</h3>
+      <p>These Terms are governed by the laws of the Republic of Korea. Any disputes arising from the use of the Service shall be subject to the exclusive jurisdiction of the Seoul Central District Court.</p>
+
+      <hr class="divider">
+      <div class="info-box">
+        <p><strong>Contact:</strong> support@birthcode.app &nbsp;·&nbsp; +82-10-3406-5572<br>
+        Artiverse Corporation · 29 Jongam-ro 25-gil, Seongbuk-gu, Seoul, Korea</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PRIVACY POLICY ===== -->
+  <div id="tab-privacy" class="policy-section">
+    <div class="section-title">Privacy Policy</div>
+    <div class="section-date">Last updated: March 18, 2026</div>
+    <div class="policy-body">
+
+      <h3>1. Information We Collect</h3>
+      <p>To provide our Service, we collect the following information that you voluntarily provide:</p>
+      <ul>
+        <li>Name or nickname (optional)</li>
+        <li>Date of birth and birth hour</li>
+        <li>Gender</li>
+        <li>Your personal question or concern (optional)</li>
+        <li>Payment information (processed and stored by Paddle — we do not retain card details)</li>
+      </ul>
+
+      <h3>2. How We Use Your Information</h3>
+      <ul>
+        <li>To generate and deliver your personalized Four Pillars reading</li>
+        <li>To process payments and handle refund requests</li>
+        <li>To respond to customer support inquiries</li>
+        <li>To improve the quality of our Service</li>
+      </ul>
+
+      <h3>3. Data Retention</h3>
+      <p>Personal data is deleted once the purpose for which it was collected has been fulfilled. The following data is retained as required by applicable law:</p>
+      <ul>
+        <li>Records of contracts or withdrawal of offers: 5 years (E-Commerce Act)</li>
+        <li>Records of payment and supply of goods/services: 5 years (E-Commerce Act)</li>
+        <li>Records of consumer complaints and dispute resolution: 3 years (E-Commerce Act)</li>
+      </ul>
+
+      <h3>4. Third-Party Sharing</h3>
+      <p>We do not sell or share your personal data with third parties for marketing purposes. Minimal data necessary for payment processing is shared with Paddle, our payment service provider. We may disclose data if required by law.</p>
+
+      <h3>5. Your Rights</h3>
+      <p>You have the right to access, correct, or request deletion of your personal data at any time. To exercise these rights, please contact us at the address below.</p>
+
+      <h3>6. Cookies</h3>
+      <p>BirthCode uses only essential functional cookies. We do not use tracking or advertising cookies.</p>
+
+      <h3>7. Data Protection Officer</h3>
+      <ul>
+        <li>Name: Kiwon Kang</li>
+        <li>Email: support@birthcode.app</li>
+        <li>Phone: +82-10-3406-5572</li>
+      </ul>
+
+      <hr class="divider">
+      <div class="info-box">
+        <p>To report a privacy concern, you may also contact the Personal Information Protection Commission of Korea at <strong>privacy.go.kr</strong> or the Korea Internet &amp; Security Agency at <strong>118</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== REFUND POLICY ===== -->
+  <div id="tab-refund" class="policy-section">
+    <div class="section-title">Refund Policy</div>
+    <div class="section-date">Last updated: March 18, 2026</div>
+    <div class="policy-body">
+
+      <h3>Nature of Digital Content</h3>
+      <p>BirthCode delivers a personalized AI-generated reading that is created and made available to you immediately upon payment. Because this is a digital product that is consumed instantly upon generation, refund eligibility is limited as described below.</p>
+
+      <h3>Eligible for Refund</h3>
+      <ul>
+        <li>Payment was made but content generation had not yet begun</li>
+        <li>A technical error on our side prevented the reading from being delivered</li>
+        <li>You were charged more than once for the same order (duplicate charge)</li>
+      </ul>
+
+      <h3>Not Eligible for Refund</h3>
+      <ul>
+        <li>Content generation has already started or completed</li>
+        <li>You are dissatisfied with the content or interpretation</li>
+        <li>You entered incorrect birth information</li>
+        <li>You changed your mind after the reading was delivered</li>
+      </ul>
+
+      <h3>How to Request a Refund</h3>
+      <p>If you believe you are eligible for a refund, please contact us within 7 days of your purchase date. Include your order details and a brief description of the issue. We will review your request and respond within 2 business days. Approved refunds are processed within 3–5 business days.</p>
+
+      <hr class="divider">
+      <div class="info-box">
+        <p><strong>Refund requests:</strong> support@birthcode.app<br>
+        <strong>Phone:</strong> +82-10-3406-5572<br>
+        <strong>Hours:</strong> Monday – Friday, 10:00 – 18:00 KST</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(tab) {
+  // 모든 섹션 숨기기
+  document.querySelectorAll('.policy-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  // 선택 섹션 보이기
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+  // URL 앵커 업데이트 (Paddle용)
+  history.replaceState(null, '', '#' + tab);
+  window.scrollTo(0, 0);
+}
+
+// 페이지 로드 시 URL 앵커 처리
+window.addEventListener('DOMContentLoaded', function() {
+  const hash = window.location.hash.replace('#', '');
+  if (hash === 'privacy' || hash === 'refund' || hash === 'terms') {
+    const btn = document.querySelector('.tab-btn[onclick="showTab(\'' + hash + '\')"]');
+    if (btn) {
+      document.querySelectorAll('.policy-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + hash).classList.add('active');
+      btn.classList.add('active');
+    }
+  }
+});
+</script>
+</body>
+</html>

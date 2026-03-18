@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/policy", "destination": "/policy.html" },
+    { "source": "/", "destination": "/birthcode.html" },
+    { "source": "/(.*)", "destination": "/birthcode.html" }
+  ]
+}
