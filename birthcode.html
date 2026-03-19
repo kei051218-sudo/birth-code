@@ -172,6 +172,19 @@
   .btn-select-spark:hover { background: var(--gold-dim); border-color: var(--gold); }
   .price-divider { text-align: center; font-size: 11px; color: var(--text-dim); margin: 4px 0 4px; letter-spacing: 1px; }
 
+  /* ===== 업셀 인라인 배너 (Spark 완료 후) ===== */
+  .upsell-banner { background: linear-gradient(135deg, #1a1228 0%, #0f0f1e 100%); border: 1px solid rgba(123,94,167,0.5); border-radius: var(--radius); padding: 24px 20px; margin-bottom: 16px; animation: fadeIn 0.5s ease; }
+  .upsell-banner-tag { display: inline-block; background: linear-gradient(135deg, var(--accent), #9b6fd4); border-radius: 20px; padding: 3px 12px; font-size: 10px; color: #fff; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 12px; }
+  .upsell-banner-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 8px; }
+  .upsell-banner-title em { color: var(--accent2); font-style: normal; }
+  .upsell-banner-body { font-size: 13px; color: var(--text-dim); line-height: 1.7; margin-bottom: 16px; }
+  .upsell-banner-price-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .upsell-banner-price-now { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; color: var(--accent2); }
+  .upsell-banner-price-was { font-size: 13px; color: var(--text-dim); text-decoration: line-through; }
+  .upsell-banner-save { font-size: 11px; color: #7abf6e; background: rgba(122,191,110,0.12); border-radius: 20px; padding: 3px 10px; }
+  .btn-upsell-banner { width: 100%; background: linear-gradient(135deg, var(--accent) 0%, #9b6fd4 100%); border: none; border-radius: 12px; padding: 15px; color: #fff; font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .btn-upsell-banner:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(123,94,167,0.4); }
+
   /* ===== 업셀 모달 ===== */
   .upsell-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; display: flex; align-items: flex-end; justify-content: center; animation: fadeIn 0.3s ease; }
   .upsell-modal { background: linear-gradient(160deg, #1a1228 0%, #0f0f1e 100%); border: 1px solid rgba(123,94,167,0.5); border-radius: 20px 20px 0 0; padding: 28px 24px 40px; width: 100%; max-width: 480px; animation: slideUp 0.35s ease; }
@@ -933,12 +946,7 @@ if (typeof Paddle !== 'undefined') {
     eventCallback: function(data) {
       if (data.name === 'checkout.completed') {
         const tier = sessionStorage.getItem('pending_tier') || currentTier;
-        if (tier === 'spark') {
-          // Spark 결제 완료 → 업셀 모달 표시
-          document.getElementById('upsell-overlay').style.display = 'flex';
-        } else {
-          proceedToAnalysis(tier);
-        }
+        proceedToAnalysis(tier);
       } else if (data.name === 'checkout.closed') {
         document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes').forEach(b => { b.disabled = false; });
       }
@@ -1081,6 +1089,10 @@ async function runPremiumAnalysis(parts, promptBuilder) {
   }
   document.getElementById('progress-label').textContent = 'Reading complete ✓';
   setTimeout(() => {
+    const tier = sessionStorage.getItem('pending_tier') || 'soul';
+    if (tier === 'spark') {
+      showSparkUpsellBanner();
+    }
     const s = document.getElementById('share-section');
     if (s) { s.style.display = 'block'; s.scrollIntoView({ behavior:'smooth', block:'start' }); }
   }, 800);
@@ -1198,6 +1210,30 @@ function showError(msg) { const el = document.getElementById('error-msg'); el.te
 function hideError() { document.getElementById('error-msg').style.display = 'none'; }
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+// ==================== 업셀 인라인 배너 ====================
+function showSparkUpsellBanner() {
+  const shareSection = document.getElementById('share-section');
+  if (!shareSection) return;
+
+  const banner = document.createElement('div');
+  banner.className = 'upsell-banner';
+  banner.id = 'spark-upsell-banner';
+  banner.innerHTML = `
+    <div class="upsell-banner-tag">✦ UPGRADE AVAILABLE</div>
+    <div class="upsell-banner-title">Want the <em>complete</em> picture?</div>
+    <div class="upsell-banner-body">You've seen what your Spark Reading reveals. Your Soul Blueprint goes 9 layers deeper — uncovering your 3-year destiny arc, hidden turning points, and a month-by-month action roadmap built specifically for your chart.</div>
+    <div class="upsell-banner-price-row">
+      <div class="upsell-banner-price-now">$6.99</div>
+      <div class="upsell-banner-price-was">$9.99</div>
+      <div class="upsell-banner-save">Save $3</div>
+    </div>
+    <button class="btn-upsell-banner" onclick="acceptUpsell()">Upgrade to Soul Blueprint — $6.99</button>
+  `;
+
+  shareSection.parentNode.insertBefore(banner, shareSection);
+  banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 // ==================== DEV TEST (배포 전 제거) ====================
 function devTest(tier) {
   state.name = 'Test User';
@@ -1207,11 +1243,7 @@ function devTest(tier) {
   const saju = calcSaju(1990, 3, 15, state.hour);
   state.sajuInfo = { ...saju, title: 'Your Four Pillars Reading' };
   sessionStorage.setItem('pending_tier', tier);
-  if (tier === 'spark') {
-    document.getElementById('upsell-overlay').style.display = 'flex';
-  } else {
-    proceedToAnalysis(tier);
-  }
+  proceedToAnalysis(tier);
 }
 
 showScreen('screen-input');
