@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BirthCode — Decode Your Four Pillars</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <script>
-  // 테스트 채널키 (KG이니시스)
-  window.PORTONE_CHANNEL_KEY = 'channel-key-02f30a49-484b-4b51-8b4e-6cf5e34ee8ae';
+  // Paddle Sandbox 설정
+  Paddle.Environment.set("sandbox");
+  Paddle.Initialize({ token: "test_10bb0f5f69b0daa7ab95ba142d6" });
 </script>
 <style>
   :root {
@@ -588,7 +589,7 @@ Output ONLY valid JSON. No other text whatsoever.
     "mainElement": "Client dominant element — one of: Wood / Fire / Earth / Metal / Water",
     "title": "A single compelling sentence that captures the essence of this reading"
   },
-  "freeAnalysis": "Write the following two parts as flowing, connected prose. Total: 400-500 words.\n\n[Part 1: Why This Is Happening Now — 200-250 words]\nExplain the Four Pillars reason this issue is surfacing at this exact time. Reference specific elements (Heavenly Stems and Earthly Branches) and always follow technical terms with a plain-English explanation in parentheses. Frame it as self-understanding — empowering, not fatalistic. Connect directly to what the client shared in the conversation.\n\n[Part 2: One Actionable Move — 150-200 words]\nGive one specific, time-bound action they can take this week or this month. Make it concrete and tied to their elemental energy.\n\nClose with: 'The deeper reason this pattern keeps repeating — and the exact moves to shift it — are waiting in your full reading. Click below when you are ready.'\n- Always explain Chinese characters in plain English\n- No markdown. Plain text only."
+  "freeAnalysis": "[WRITE THIS AS PLAIN FLOWING PROSE — NO HEADERS, NO BULLETS, NO MARKDOWN]\n\nPART 1 (200-250 words): Explain the Four Pillars reason this specific struggle is surfacing right now in their life. Use the client conversation to make it feel personal. Name the relevant Heavenly Stems and Earthly Branches, always explaining them in plain English in parentheses. Be empowering and direct — this is insight, not prophecy.\n\nPART 2 (150-200 words): Give one concrete, time-bound action tied to their elemental energy. Specify \'this week\' or \'this month\'. Make it practical and connected to what they shared.\n\nFINAL SENTENCE — this must be the very last sentence, word for word: \'But here is what this free reading cannot show you — the exact moment your energy shifts, and precisely what to do when it does. That is waiting in your full reading.\'\n\nRULES: No markdown. No headers. Plain text only. Chinese characters must always be followed by English explanation in parentheses."
 }`;
 
   try {
@@ -762,100 +763,80 @@ function animateLoading() {
   window._loadingInterval = setInterval(() => { i = (i+1) % loadingTexts.length; el.textContent = loadingTexts[i]; }, 1800);
 }
 
-// ==================== 결제 ====================
-const PORTONE_STORE_ID = 'store-ea30699d-2ba5-4783-9033-54ff9f29ca8c';
-const PAYMENT_AMOUNT = 2900;
-const CHANNEL_CARD = 'channel-key-02f30a49-484b-4b51-8b4e-6cf5e34ee8ae';   // KG이니시스
-const CHANNEL_KAKAO = 'channel-key-da6cbdd0-76c9-45d3-a2b0-f9bbd57a146f';  // 카카오페이
+// ==================== 결제 (Paddle Sandbox) ====================
+const PADDLE_PRICE_ID = 'pri_01km1wvc290h59bgxb3tk0thst';
+
+// Paddle 결제 성공 후 페이지 복귀 처리 (모바일)
+window.addEventListener('DOMContentLoaded', function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('paddle_success') === '1') {
+    history.replaceState({}, '', window.location.pathname);
+    const savedState = sessionStorage.getItem('pending_payment_state');
+    if (savedState) {
+      try { Object.assign(state, JSON.parse(savedState)); } catch(e) {}
+    }
+    proceedToAnalysis();
+  }
+});
 
 async function startPremium() {
-  await requestPayment('card');
+  await requestPaddlePayment();
 }
 
 async function startPremiumWith(method) {
-  // 결제 전에 고민 값 state에 저장 (화면 전환 후에도 유지되도록)
-  state.concern = document.getElementById('inp-concern')?.value?.trim() || '';
-  await requestPayment(method);
+  await requestPaddlePayment();
 }
 
-async function requestPayment(method) {
-  if (!window.PortOne) {
-    showPaymentError("Payment module failed to load. Please refresh and try again.");
+async function requestPaddlePayment() {
+  if (typeof Paddle === 'undefined') {
+    showPaymentError('Payment module failed to load. Please refresh and try again.');
     return;
   }
 
-  const isKakao = method === 'kakao';
-  const channelKey = isKakao ? CHANNEL_KAKAO : CHANNEL_CARD;
-  const payMethod = isKakao ? 'EASY_PAY' : 'CARD';
-  const paymentId = 'saju_' + Date.now() + '_' + Math.random().toString(36).substr(2,9);
-  const orderName = 'BirthCode — Four Pillars Reading (' + (state.name || '고객') + '님)';
+  // 상태 저장 (모바일 redirect 복구용)
+  sessionStorage.setItem('pending_payment_state', JSON.stringify({
+    name: state.name, year: state.year, month: state.month, day: state.day,
+    hour: state.hour, gender: state.gender, concern: state.concern, sajuInfo: state.sajuInfo
+  }));
 
-  // 버튼 비활성화
-  document.querySelectorAll('.btn-premium, .btn-kakaopay').forEach(b => { b.disabled = true; });
+  document.querySelectorAll('.btn-premium').forEach(b => { b.disabled = true; });
 
   try {
-    const payParams = {
-      storeId: PORTONE_STORE_ID,
-      channelKey: channelKey,
-      paymentId: paymentId,
-      orderName: orderName,
-      totalAmount: PAYMENT_AMOUNT,
-      currency: 'CURRENCY_KRW',
-      payMethod: payMethod,
-      customer: {
-        fullName: state.name || '고객',
-        phoneNumber: '01000000000',
-        email: 'customer@saju-app.com',
+    Paddle.Checkout.open({
+      items: [{ priceId: PADDLE_PRICE_ID, quantity: 1 }],
+      customData: { name: state.name || 'Customer' },
+      settings: {
+        displayMode: 'overlay',
+        theme: 'dark',
+        locale: 'en',
       },
-    };
-
-    if (isKakao) {
-      payParams.easyPay = { easyPayProvider: 'KAKAOPAY' };
-    }
-
-    const response = await window.PortOne.requestPayment(payParams);
-
-    if (response && response.code !== undefined) {
-      document.querySelectorAll('.btn-premium, .btn-kakaopay').forEach(b => { b.disabled = false; });
-      if (response.code === 'FAILURE_TYPE_PG') {
-        showPaymentError('Payment failed: ' + (response.message || '다시 시도해주세요.'));
-      }
-      // 사용자 취소는 조용히 처리
-      return;
-    }
-
-    // 결제 성공 → 검증 후 분석 시작
-    await verifyAndStartAnalysis(paymentId);
-
+      successUrl: window.location.origin + window.location.pathname + '?paddle_success=1',
+    });
   } catch(e) {
-    console.error('Payment error:', e);
-    showPaymentError("Something went wrong with payment. Please try again.");
-    document.querySelectorAll('.btn-premium, .btn-kakaopay').forEach(b => { b.disabled = false; });
+    console.error('Paddle error:', e);
+    showPaymentError('Something went wrong with payment. Please try again.');
+    document.querySelectorAll('.btn-premium').forEach(b => { b.disabled = false; });
   }
 }
 
-async function verifyAndStartAnalysis(paymentId) {
-  try {
-    const verifyUrl = '/api/verify-payment';
-    const res = await fetch(verifyUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ paymentId: paymentId, amount: PAYMENT_AMOUNT }),
-    });
-    const result = await res.json();
-    if (result.success) {
-      proceedToAnalysis();
-    } else {
-      showPaymentError("Payment verification failed. Please contact support.");
+// Paddle 이벤트 리스너 (결제 완료/취소)
+if (typeof Paddle !== 'undefined') {
+  Paddle.Update({
+    eventCallback: function(data) {
+      if (data.name === 'checkout.completed') {
+        proceedToAnalysis();
+      } else if (data.name === 'checkout.closed') {
+        document.querySelectorAll('.btn-premium').forEach(b => { b.disabled = false; });
+      }
     }
-  } catch(e) {
-    // 검증 서버 없는 경우(개발/테스트) → 분석 진행
-    console.warn("Payment verification skipped — starting reading.", e);
-    proceedToAnalysis();
-  }
+  });
 }
 
 function proceedToAnalysis() {
+  sessionStorage.setItem('pending_payment_state', JSON.stringify({
+    name: state.name, year: state.year, month: state.month, day: state.day,
+    hour: state.hour, gender: state.gender, concern: state.concern, sajuInfo: state.sajuInfo
+  }));
   showScreen('screen-premium');
   document.getElementById('premium-title').textContent = (state.name ? state.name + "'s" : 'Your') + ' Destiny Deep Dive';
   buildPartsUI();
@@ -864,7 +845,7 @@ function proceedToAnalysis() {
 
 function showPaymentError(msg) {
   const btn = document.querySelector('.btn-premium');
-  if (btn) { btn.disabled = false; btn.innerHTML = "Unlock My Full Reading<span class=\"btn-premium-sub\">$2.99 · 9-part complete analysis</span>"; }
+  if (btn) { btn.disabled = false; btn.innerHTML = 'Unlock My Full Reading<span class="btn-premium-sub">$2.99 · 9-part complete analysis</span>'; }
   let errEl = document.getElementById('payment-error-msg');
   if (!errEl) {
     errEl = document.createElement('div');
