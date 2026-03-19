@@ -698,14 +698,6 @@ Output ONLY valid JSON. No other text whatsoever.
 
 
 
-function buildToc() {
-  document.getElementById('toc-list').innerHTML = PARTS.map(p => `
-    <li class="toc-item">
-      <span style="font-size:14px;flex-shrink:0;opacity:0.6">🔒</span>
-      <span class="toc-num">${p.num}</span>
-      <span class="toc-text">${p.title}</span>
-    </li>`).join('');
-}
 
 async function startAnalysis() {
   const year = document.getElementById('inp-year').value.trim();
@@ -819,7 +811,6 @@ function showFreeResult(raw, saju) {
   document.getElementById('result-title').textContent = state.sajuInfo.title;
 
   showScreen('screen-result');
-  buildToc();
 
   const cleanedAnalysis = (parsed.freeAnalysis || '')
     .replace(/\*\*([^*]+)\*\*/g,'$1').replace(/\*([^*]+)\*/g,'$1');
