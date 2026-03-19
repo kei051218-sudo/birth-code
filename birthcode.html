@@ -156,9 +156,12 @@
   .price-card-title { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
   .price-card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; margin-bottom: 14px; }
   .price-card-features { list-style: none; margin-bottom: 16px; }
-  .price-card-features li { font-size: 12px; color: var(--text-dim); padding: 4px 0; display: flex; align-items: center; gap: 8px; }
-  .price-card-features li::before { content: '✦'; color: var(--gold); font-size: 9px; flex-shrink: 0; }
-  .price-card.soul .price-card-features li::before { color: var(--accent2); }
+  .price-card-features li { font-size: 12px; color: var(--text-dim); padding: 7px 0; display: flex; align-items: flex-start; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .price-card-features li:last-child { border-bottom: none; }
+  .part-lock { font-size: 11px; flex-shrink: 0; opacity: 0.5; margin-top: 1px; }
+  .part-info { display: flex; flex-direction: column; gap: 1px; }
+  .part-label { font-family: 'Cormorant Garamond', serif; font-size: 10px; color: var(--gold); letter-spacing: 1px; }
+  .price-card.soul .part-label { color: var(--accent2); }
   .price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 14px; }
   .price-amount { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; color: var(--gold2); }
   .price-card.soul .price-amount { color: var(--accent2); }
@@ -253,6 +256,12 @@
     </div>
     <button class="btn-primary" id="btn-analyze" onclick="goToChat()">✦ Begin Your Reading →</button>
     <div class="error-msg" id="error-msg"></div>
+
+    <!-- DEV TEST BUTTONS — 배포 전 제거 -->
+    <div id="dev-test-btns" style="margin-top:16px;display:flex;gap:8px;">
+      <button onclick="devTest('spark')" style="flex:1;padding:10px;background:rgba(201,168,76,0.1);border:1px dashed rgba(201,168,76,0.4);border-radius:10px;color:#c9a84c;font-size:12px;cursor:pointer;">DEV: Test Spark</button>
+      <button onclick="devTest('soul')" style="flex:1;padding:10px;background:rgba(123,94,167,0.1);border:1px dashed rgba(123,94,167,0.4);border-radius:10px;color:#a07fd4;font-size:12px;cursor:pointer;">DEV: Test Soul</button>
+    </div>
   </div>
 
   <!-- 채팅 화면 -->
@@ -306,15 +315,19 @@
           <div class="price-card-title">Soul Blueprint</div>
           <div class="price-card-desc">The complete picture — every layer of your Four Pillars decoded with precision.</div>
           <ul class="price-card-features">
-            <li>9-part deep analysis (~8,000 words)</li>
-            <li>Root cause of your recurring pattern</li>
-            <li>Month-by-month action roadmap</li>
-            <li>3-year destiny turning points</li>
-            <li>Your personal destiny playbook</li>
+            <li><span class="part-lock">🔒</span><span class="part-info"><span class="part-label">PART 1</span> Why This Pattern Keeps Repeating</span></li>
+            <li><span class="part-lock">🔒</span><span class="part-info"><span class="part-label">PART 2</span> The Energy Shifts &amp; Critical Timing This Year</span></li>
+            <li><span class="part-lock">🔒</span><span class="part-info"><span class="part-label">PART 3</span> 3 Strategies to Break the Root Cycle</span></li>
+            <li><span class="part-lock">🔒</span><span class="part-info"><span class="part-label">PART 4</span> Your Natural Strengths &amp; How to Leverage Them Now</span></li>
+            <li><span class="part-lock">🔒</span><span class="part-info"><span class="part-label">PART 5</span> Hidden Traps &amp; the Turning Point Ahead</span></li>
+            <li><span class="part-lock">🔒</span><span class="part-info"><span class="part-label">PART 6</span> How Your Relationships &amp; Environment Are Affecting You</span></li>
+            <li><span class="part-lock">🔒</span><span class="part-info"><span class="part-label">PART 7</span> Your Destiny Turning Points in the Next 3 Years</span></li>
+            <li><span class="part-lock">🔒</span><span class="part-info"><span class="part-label">PART 8</span> Month-by-Month Action Roadmap</span></li>
+            <li><span class="part-lock">🔒</span><span class="part-info"><span class="part-label">PART 9</span> Your Personal Destiny Playbook</span></li>
           </ul>
           <div class="price-row">
             <div class="price-amount">$9.99</div>
-            <div class="price-onetime">one-time</div>
+            <div class="price-onetime">one-time · ~8,000 words</div>
           </div>
           <button class="btn-select-soul" onclick="startPremiumWith('soul')">Get My Soul Blueprint →</button>
         </div>
@@ -325,11 +338,11 @@
         <div class="price-card spark">
           <div class="price-badge basic">SPARK READING</div>
           <div class="price-card-title">Spark Reading</div>
-          <div class="price-card-desc">The core insights — why this is happening and your first clear steps forward.</div>
+          <div class="price-card-desc">The core insights — why this is happening and your first steps forward.</div>
           <ul class="price-card-features">
-            <li>Root cause analysis (why now)</li>
-            <li>Concrete action steps for this month</li>
-            <li>Energy flow for the season ahead</li>
+            <li><span class="part-lock">🔒</span><span class="part-info"><span class="part-label">PART 1</span> Why This Pattern Is Surfacing Right Now</span></li>
+            <li><span class="part-lock">🔒</span><span class="part-info"><span class="part-label">PART 2</span> Your Action Plan for This Month</span></li>
+            <li><span class="part-lock">🔒</span><span class="part-info"><span class="part-label">PART 3</span> The Energy Shift Coming Your Way</span></li>
           </ul>
           <div class="price-row">
             <div class="price-amount">$2.99</div>
@@ -1184,6 +1197,17 @@ function showShareMsg(msg) {
 function showError(msg) { const el = document.getElementById('error-msg'); el.textContent = msg; el.style.display = 'block'; }
 function hideError() { document.getElementById('error-msg').style.display = 'none'; }
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ==================== DEV TEST (배포 전 제거) ====================
+function devTest(tier) {
+  state.name = 'Test User';
+  state.year = '1990'; state.month = '3'; state.day = '15';
+  state.hour = '오시(11-13시)'; state.gender = '여';
+  state.concern = 'I keep struggling with career direction. I feel stuck and unsure whether to stay in my current job or make a big change. This pattern of indecision has repeated for years.';
+  const saju = calcSaju(1990, 3, 15, state.hour);
+  state.sajuInfo = { ...saju, title: 'Your Four Pillars Reading' };
+  proceedToAnalysis(tier);
+}
 
 showScreen('screen-input');
 </script>
