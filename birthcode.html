@@ -9,7 +9,17 @@
 <script>
   // Paddle Sandbox 설정
   Paddle.Environment.set("sandbox");
-  Paddle.Initialize({ token: "test_10bb0f5f69b0daa7ab95ba142d6" });
+  Paddle.Initialize({
+    token: "test_10bb0f5f69b0daa7ab95ba142d6",
+    eventCallback: function(data) {
+      if (data.name === 'checkout.completed') {
+        const tier = sessionStorage.getItem('pending_tier') || 'soul';
+        proceedToAnalysis(tier);
+      } else if (data.name === 'checkout.closed') {
+        document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(function(b) { b.disabled = false; });
+      }
+    }
+  });
 </script>
 <style>
   :root {
@@ -941,18 +951,7 @@ async function requestPaddlePayment(priceId, tier) {
   }
 }
 
-if (typeof Paddle !== 'undefined') {
-  Paddle.Update({
-    eventCallback: function(data) {
-      if (data.name === 'checkout.completed') {
-        const tier = sessionStorage.getItem('pending_tier') || currentTier;
-        proceedToAnalysis(tier);
-      } else if (data.name === 'checkout.closed') {
-        document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes').forEach(b => { b.disabled = false; });
-      }
-    }
-  });
-}
+
 
 function proceedToAnalysis(tier) {
   sessionStorage.setItem('pending_payment_state', JSON.stringify({
