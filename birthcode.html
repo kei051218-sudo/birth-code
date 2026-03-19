@@ -141,6 +141,53 @@
   .chat-send-btn:hover { transform: scale(1.05); }
   .chat-send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
   .chat-hint { font-size: 11px; color: var(--text-dim); text-align: center; margin-top: 10px; }
+
+  /* ===== 가격 선택 카드 ===== */
+  .pricing-section { margin-top: 8px; }
+  .pricing-eyebrow { font-size: 11px; color: var(--accent2); letter-spacing: 2px; text-align: center; margin-bottom: 14px; }
+  .price-card { border-radius: var(--radius); padding: 22px 20px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; position: relative; }
+  .price-card.soul { background: linear-gradient(135deg, #1a1228 0%, #0f0f1e 100%); border: 1px solid rgba(123,94,167,0.5); }
+  .price-card.soul:hover { border-color: rgba(123,94,167,0.9); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(123,94,167,0.2); }
+  .price-card.spark { background: var(--bg2); border: 1px solid var(--border); }
+  .price-card.spark:hover { border-color: rgba(201,168,76,0.5); transform: translateY(-1px); }
+  .price-badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 1px; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; }
+  .price-badge.recommended { background: linear-gradient(135deg, var(--accent), #9b6fd4); color: #fff; }
+  .price-badge.basic { background: var(--gold-dim); border: 1px solid rgba(201,168,76,0.4); color: var(--gold); }
+  .price-card-title { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .price-card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; margin-bottom: 14px; }
+  .price-card-features { list-style: none; margin-bottom: 16px; }
+  .price-card-features li { font-size: 12px; color: var(--text-dim); padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+  .price-card-features li::before { content: '✦'; color: var(--gold); font-size: 9px; flex-shrink: 0; }
+  .price-card.soul .price-card-features li::before { color: var(--accent2); }
+  .price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 14px; }
+  .price-amount { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; color: var(--gold2); }
+  .price-card.soul .price-amount { color: var(--accent2); }
+  .price-onetime { font-size: 12px; color: var(--text-dim); }
+  .btn-select-soul { width: 100%; background: linear-gradient(135deg, var(--accent) 0%, #9b6fd4 100%); border: none; border-radius: 10px; padding: 14px; color: #fff; font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s; }
+  .btn-select-soul:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(123,94,167,0.4); }
+  .btn-select-spark { width: 100%; background: transparent; border: 1px solid var(--border); border-radius: 10px; padding: 13px; color: var(--gold); font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s; }
+  .btn-select-spark:hover { background: var(--gold-dim); border-color: var(--gold); }
+  .price-divider { text-align: center; font-size: 11px; color: var(--text-dim); margin: 4px 0 4px; letter-spacing: 1px; }
+
+  /* ===== 업셀 모달 ===== */
+  .upsell-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; display: flex; align-items: flex-end; justify-content: center; animation: fadeIn 0.3s ease; }
+  .upsell-modal { background: linear-gradient(160deg, #1a1228 0%, #0f0f1e 100%); border: 1px solid rgba(123,94,167,0.5); border-radius: 20px 20px 0 0; padding: 28px 24px 40px; width: 100%; max-width: 480px; animation: slideUp 0.35s ease; }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .upsell-tag { display: inline-block; background: linear-gradient(135deg, var(--accent), #9b6fd4); border-radius: 20px; padding: 4px 12px; font-size: 10px; color: #fff; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 14px; }
+  .upsell-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 8px; }
+  .upsell-title em { color: var(--accent2); font-style: normal; }
+  .upsell-body { font-size: 13px; color: var(--text-dim); line-height: 1.7; margin-bottom: 20px; }
+  .upsell-price-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .upsell-price-now { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: var(--accent2); }
+  .upsell-price-was { font-size: 14px; color: var(--text-dim); text-decoration: line-through; }
+  .upsell-price-save { font-size: 12px; color: #7abf6e; background: rgba(122,191,110,0.12); border-radius: 20px; padding: 3px 10px; }
+  .btn-upsell-yes { width: 100%; background: linear-gradient(135deg, var(--accent) 0%, #9b6fd4 100%); border: none; border-radius: 12px; padding: 16px; color: #fff; font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-bottom: 10px; }
+  .btn-upsell-yes:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(123,94,167,0.4); }
+  .btn-upsell-no { width: 100%; background: transparent; border: none; padding: 10px; color: var(--text-dim); font-size: 13px; font-family: 'Inter', sans-serif; cursor: pointer; text-decoration: underline; }
+  .btn-upsell-no:hover { color: var(--text); }
+  .upsell-features { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+  .upsell-feature { font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+  .upsell-feature::before { content: '✦'; color: var(--accent2); font-size: 9px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -250,24 +297,70 @@
       </div>
     </div>
     <div class="hook-section" id="hook-section">
-      <div class="hook-card">
-        <div class="hook-eyebrow">UNLOCK YOUR DESTINY</div>
-        <div class="hook-headline">Why does this pattern keep <em>repeating</em>?<br>The answer is written in your <em>stars</em>.</div>
-        <div class="hook-body">Beyond the surface, the root cause of your recurring struggle lives inside your Four Pillars. Discover which choices will shift your energy this season — with a 9-part deep reading.</div>
-        <ul class="toc-list" id="toc-list"></ul>
-        <div class="volume-badge">
-          <div class="volume-num">9-Part Deep Reading · ~8,000 words</div>
-          <div class="volume-price">$2.99<span>one-time</span></div>
+      <div class="pricing-section">
+        <div class="pricing-eyebrow">UNLOCK YOUR FULL READING</div>
+
+        <!-- Soul Blueprint ($9.99) -->
+        <div class="price-card soul">
+          <div class="price-badge recommended">✦ MOST COMPLETE</div>
+          <div class="price-card-title">Soul Blueprint</div>
+          <div class="price-card-desc">The complete picture — every layer of your Four Pillars decoded with precision.</div>
+          <ul class="price-card-features">
+            <li>9-part deep analysis (~8,000 words)</li>
+            <li>Root cause of your recurring pattern</li>
+            <li>Month-by-month action roadmap</li>
+            <li>3-year destiny turning points</li>
+            <li>Your personal destiny playbook</li>
+          </ul>
+          <div class="price-row">
+            <div class="price-amount">$9.99</div>
+            <div class="price-onetime">one-time</div>
+          </div>
+          <button class="btn-select-soul" onclick="startPremiumWith('soul')">Get My Soul Blueprint →</button>
         </div>
-        <div class="blur-preview">
-          <div class="blur-preview-text">The real root of this pattern begins in your Day Master's elemental imbalance. The tension between your current Grand Luck Cycle and this year's energy is amplifying everything — and there's a pivotal turning point clearly visible in...</div>
-          <div class="blur-overlay"><span class="blur-overlay-text">🔒 Unlocked in your full reading</span></div>
+
+        <div class="price-divider">or start with the essentials</div>
+
+        <!-- Spark Reading ($2.99) -->
+        <div class="price-card spark">
+          <div class="price-badge basic">SPARK READING</div>
+          <div class="price-card-title">Spark Reading</div>
+          <div class="price-card-desc">The core insights — why this is happening and your first clear steps forward.</div>
+          <ul class="price-card-features">
+            <li>Root cause analysis (why now)</li>
+            <li>Concrete action steps for this month</li>
+            <li>Energy flow for the season ahead</li>
+          </ul>
+          <div class="price-row">
+            <div class="price-amount">$2.99</div>
+            <div class="price-onetime">one-time</div>
+          </div>
+          <button class="btn-select-spark" onclick="startPremiumWith('spark')">Start with Spark Reading →</button>
         </div>
-        <button class="btn-premium" onclick="startPremiumWith('card')">
-          Unlock My Full Reading
-          <span class="btn-premium-sub">$2.99 · 9-part · ~8,000 words complete analysis</span>
-        </button>
+
       </div>
+    </div>
+  </div>
+
+  <!-- 업셀 모달 ($6.99 Blueprint Unlocked) -->
+  <div id="upsell-overlay" class="upsell-overlay" style="display:none;">
+    <div class="upsell-modal">
+      <div class="upsell-tag">✦ LIMITED OFFER</div>
+      <div class="upsell-title">Want the <em>complete</em> picture?</div>
+      <div class="upsell-body">Your Spark Reading is ready — but there's so much more written in your chart. Upgrade to Soul Blueprint right now at a special rate.</div>
+      <div class="upsell-features">
+        <div class="upsell-feature">9-part deep analysis (~8,000 words)</div>
+        <div class="upsell-feature">Month-by-month action roadmap</div>
+        <div class="upsell-feature">3-year destiny turning points</div>
+        <div class="upsell-feature">Your personal destiny playbook</div>
+      </div>
+      <div class="upsell-price-row">
+        <div class="upsell-price-now">$6.99</div>
+        <div class="upsell-price-was">$9.99</div>
+        <div class="upsell-price-save">Save $3</div>
+      </div>
+      <button class="btn-upsell-yes" onclick="acceptUpsell()">Upgrade to Soul Blueprint — $6.99</button>
+      <button class="btn-upsell-no" onclick="declineUpsell()">No thanks, keep my Spark Reading</button>
     </div>
   </div>
 
@@ -589,7 +682,7 @@ Output ONLY valid JSON. No other text whatsoever.
     "mainElement": "Client dominant element — one of: Wood / Fire / Earth / Metal / Water",
     "title": "A single compelling sentence that captures the essence of this reading"
   },
-  "freeAnalysis": "[WRITE THIS AS PLAIN FLOWING PROSE — NO HEADERS, NO BULLETS, NO MARKDOWN]\n\nPART 1 (200-250 words): Explain the Four Pillars reason this specific struggle is surfacing right now in their life. Use the client conversation to make it feel personal. Name the relevant Heavenly Stems and Earthly Branches, always explaining them in plain English in parentheses. Be empowering and direct — this is insight, not prophecy.\n\nPART 2 (150-200 words): Give one concrete, time-bound action tied to their elemental energy. Specify \'this week\' or \'this month\'. Make it practical and connected to what they shared.\n\nFINAL SENTENCE — this must be the very last sentence, word for word: \'But here is what this free reading cannot show you — the exact moment your energy shifts, and precisely what to do when it does. That is waiting in your full reading.\'\n\nRULES: No markdown. No headers. Plain text only. Chinese characters must always be followed by English explanation in parentheses."
+  "freeAnalysis": "[WRITE THIS AS PLAIN FLOWING PROSE — NO HEADERS, NO BULLETS, NO MARKDOWN]\n\nONLY ONE PART (250-320 words): Explain precisely why this specific struggle is surfacing right now in their life, using their Four Pillars. Use the client conversation to make it feel deeply personal and specific — not generic. Name the relevant Heavenly Stems and Earthly Branches, always explaining them in plain English in parentheses. Be empowering, sharp, and direct — this is precise diagnosis, not vague prophecy. The person should feel genuinely seen and slightly stunned by the accuracy.\n\nFINAL SENTENCE — this must be the very last sentence, word for word: 'You now know why this pattern exists in your chart. But knowing the root is only half the equation — what changes everything is knowing exactly what to do about it, and when. That is what your full reading answers.'\n\nRULES: No markdown. No headers. Plain text only. Chinese characters must always be followed by English explanation in parentheses. Do NOT give any action advice or solutions — diagnosis only."
 }`;
 
   try {
@@ -763,10 +856,13 @@ function animateLoading() {
   window._loadingInterval = setInterval(() => { i = (i+1) % loadingTexts.length; el.textContent = loadingTexts[i]; }, 1800);
 }
 
-// ==================== 결제 (Paddle Sandbox) ====================
-const PADDLE_PRICE_ID = 'pri_01km1wvc290h59bgxb3tk0thst';
+// ==================== 결제 (Paddle) ====================
+const PADDLE_PRICE_SPARK  = 'pri_01km1wvc290h59bgxb3tk0thst'; // $2.99 Spark Reading
+const PADDLE_PRICE_UNLOCK = 'pri_01km21vg4as4gjtjhb9f5ht890'; // $6.99 Blueprint Unlocked
+const PADDLE_PRICE_SOUL   = 'pri_01km21q203y6zbca92s6ktasrj'; // $9.99 Soul Blueprint
 
-// Paddle 결제 성공 후 페이지 복귀 처리 (모바일)
+let currentTier = 'soul'; // 'spark' | 'soul' | 'unlock'
+
 window.addEventListener('DOMContentLoaded', function() {
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('paddle_success') === '1') {
@@ -775,94 +871,187 @@ window.addEventListener('DOMContentLoaded', function() {
     if (savedState) {
       try { Object.assign(state, JSON.parse(savedState)); } catch(e) {}
     }
-    proceedToAnalysis();
+    const savedTier = sessionStorage.getItem('pending_tier') || 'soul';
+    proceedToAnalysis(savedTier);
   }
 });
 
 async function startPremium() {
-  await requestPaddlePayment();
+  await startPremiumWith('soul');
 }
 
-async function startPremiumWith(method) {
-  await requestPaddlePayment();
+async function startPremiumWith(tier) {
+  currentTier = tier;
+  const priceId = tier === 'spark' ? PADDLE_PRICE_SPARK : PADDLE_PRICE_SOUL;
+  await requestPaddlePayment(priceId, tier);
 }
 
-async function requestPaddlePayment() {
+async function acceptUpsell() {
+  document.getElementById('upsell-overlay').style.display = 'none';
+  await requestPaddlePayment(PADDLE_PRICE_UNLOCK, 'unlock');
+}
+
+function declineUpsell() {
+  document.getElementById('upsell-overlay').style.display = 'none';
+  proceedToAnalysis('spark');
+}
+
+async function requestPaddlePayment(priceId, tier) {
   if (typeof Paddle === 'undefined') {
     showPaymentError('Payment module failed to load. Please refresh and try again.');
     return;
   }
 
-  // 상태 저장 (모바일 redirect 복구용)
   sessionStorage.setItem('pending_payment_state', JSON.stringify({
     name: state.name, year: state.year, month: state.month, day: state.day,
     hour: state.hour, gender: state.gender, concern: state.concern, sajuInfo: state.sajuInfo
   }));
+  sessionStorage.setItem('pending_tier', tier);
 
-  document.querySelectorAll('.btn-premium').forEach(b => { b.disabled = true; });
+  document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes').forEach(b => { b.disabled = true; });
 
   try {
     Paddle.Checkout.open({
-      items: [{ priceId: PADDLE_PRICE_ID, quantity: 1 }],
+      items: [{ priceId: priceId, quantity: 1 }],
       customData: { name: state.name || 'Customer' },
-      settings: {
-        displayMode: 'overlay',
-        theme: 'dark',
-        locale: 'en',
-      },
+      settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' },
       successUrl: window.location.origin + window.location.pathname + '?paddle_success=1',
     });
   } catch(e) {
     console.error('Paddle error:', e);
     showPaymentError('Something went wrong with payment. Please try again.');
-    document.querySelectorAll('.btn-premium').forEach(b => { b.disabled = false; });
+    document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes').forEach(b => { b.disabled = false; });
   }
 }
 
-// Paddle 이벤트 리스너 (결제 완료/취소)
 if (typeof Paddle !== 'undefined') {
   Paddle.Update({
     eventCallback: function(data) {
       if (data.name === 'checkout.completed') {
-        proceedToAnalysis();
+        const tier = sessionStorage.getItem('pending_tier') || currentTier;
+        if (tier === 'spark') {
+          // Spark 결제 완료 → 업셀 모달 표시
+          document.getElementById('upsell-overlay').style.display = 'flex';
+        } else {
+          proceedToAnalysis(tier);
+        }
       } else if (data.name === 'checkout.closed') {
-        document.querySelectorAll('.btn-premium').forEach(b => { b.disabled = false; });
+        document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes').forEach(b => { b.disabled = false; });
       }
     }
   });
 }
 
-function proceedToAnalysis() {
+function proceedToAnalysis(tier) {
   sessionStorage.setItem('pending_payment_state', JSON.stringify({
     name: state.name, year: state.year, month: state.month, day: state.day,
     hour: state.hour, gender: state.gender, concern: state.concern, sajuInfo: state.sajuInfo
   }));
+  const isFullReading = (tier === 'soul' || tier === 'unlock');
   showScreen('screen-premium');
-  document.getElementById('premium-title').textContent = (state.name ? state.name + "'s" : 'Your') + ' Destiny Deep Dive';
-  buildPartsUI();
-  runPremiumAnalysis();
+  document.getElementById('premium-title').textContent = (state.name ? state.name + "'s" : 'Your') + (isFullReading ? ' Soul Blueprint' : ' Spark Reading');
+  if (isFullReading) {
+    buildPartsUI(PARTS);
+    runPremiumAnalysis(PARTS, buildPartPrompt);
+  } else {
+    buildPartsUI(SPARK_PARTS);
+    runPremiumAnalysis(SPARK_PARTS, buildSparkPartPrompt);
+  }
 }
 
 function showPaymentError(msg) {
-  const btn = document.querySelector('.btn-premium');
-  if (btn) { btn.disabled = false; btn.innerHTML = 'Unlock My Full Reading<span class="btn-premium-sub">$2.99 · 9-part complete analysis</span>'; }
+  document.querySelectorAll('.btn-select-soul, .btn-select-spark').forEach(b => { b.disabled = false; });
   let errEl = document.getElementById('payment-error-msg');
   if (!errEl) {
     errEl = document.createElement('div');
     errEl.id = 'payment-error-msg';
     errEl.style.cssText = 'color:#e07070;font-size:13px;text-align:center;padding:10px 0;margin-bottom:8px;';
-    const hookCard = document.querySelector('.hook-card');
-    if (hookCard) {
-      const premBtn = hookCard.querySelector('.btn-premium');
-      hookCard.insertBefore(errEl, premBtn);
-    }
+    const pricingSection = document.querySelector('.pricing-section');
+    if (pricingSection) pricingSection.prepend(errEl);
   }
   errEl.textContent = msg;
   setTimeout(function() { if (errEl) errEl.textContent = ''; }, 5000);
 }
 
-function buildPartsUI() {
-  document.getElementById('parts-container').innerHTML = PARTS.map((p,i) => `
+// ==================== Spark Reading 전용 (3파트 경량) ====================
+const SPARK_PARTS = [
+  { num:'PART 1', title:'Why This Pattern Is Surfacing Right Now' },
+  { num:'PART 2', title:'Your Action Plan for This Month' },
+  { num:'PART 3', title:'The Energy Shift Coming Your Way' },
+];
+
+function buildSparkPartPrompt(index, concern, ps) {
+  const part = SPARK_PARTS[index];
+  const sajuText = `Year Pillar: ${ps?.yearPillar||'unknown'}, Month Pillar: ${ps?.monthPillar||'unknown'}, Day Pillar: ${ps?.dayPillar||'unknown'}${ps?.hourPillar ? ', Hour Pillar: '+ps.hourPillar : ''}`;
+  const prompts = [
+    `You are an expert Four Pillars of Destiny analyst writing PART 1 of a Spark Reading.
+
+[Client Info]
+- Name: ${state.name}${state.gender !== 'nb' ? ' (' + (state.gender === '남' ? 'Male' : 'Female') + ')' : ''}
+- Date of Birth: ${state.month}/${state.day}/${state.year}${state.hour ? ', Birth Hour: ' + state.hour : ''}
+- Four Pillars: ${sajuText}
+- Their question / struggle: ${concern}
+- Today: March 2026 (Year of Bing Wu 丙午, client is ${new Date().getFullYear() - parseInt(state.year)} years old)
+
+[Your Task]
+Write PART 1: "Why This Pattern Is Surfacing Right Now"
+
+Explain precisely why this specific struggle is appearing in their life at this exact moment — using their Four Pillars chart. Go deep into the elemental dynamics, Heavenly Stems and Earthly Branches at play. Connect everything directly to what they shared. The person should feel genuinely seen and slightly stunned by the accuracy.
+
+[Guidelines]
+- 3 natural paragraphs, 400-500 words total
+- No headers, no bullets, plain text only
+- Chinese characters always followed by English in parentheses
+- Warm, sharp, empowering tone — trusted advisor, not fortune teller
+- No action advice in this part — diagnosis only`,
+
+    `You are an expert Four Pillars of Destiny analyst writing PART 2 of a Spark Reading.
+
+[Client Info]
+- Name: ${state.name}${state.gender !== 'nb' ? ' (' + (state.gender === '남' ? 'Male' : 'Female') + ')' : ''}
+- Date of Birth: ${state.month}/${state.day}/${state.year}${state.hour ? ', Birth Hour: ' + state.hour : ''}
+- Four Pillars: ${sajuText}
+- Their question / struggle: ${concern}
+- Today: March 2026 (Year of Bing Wu 丙午)
+
+[Your Task]
+Write PART 2: "Your Action Plan for This Month"
+
+Give 2-3 concrete, time-bound actions tied directly to their elemental energy and current chart dynamics. Specify "this week" or "this month" for each. Make every action feel personally tailored — not generic advice. Connect each action back to what they shared about their situation.
+
+[Guidelines]
+- 3 paragraphs, 350-450 words total
+- No headers, no bullets, plain text only
+- Chinese characters always followed by English in parentheses
+- Practical, grounded, actionable tone`,
+
+    `You are an expert Four Pillars of Destiny analyst writing PART 3 of a Spark Reading.
+
+[Client Info]
+- Name: ${state.name}${state.gender !== 'nb' ? ' (' + (state.gender === '남' ? 'Male' : 'Female') + ')' : ''}
+- Date of Birth: ${state.month}/${state.day}/${state.year}${state.hour ? ', Birth Hour: ' + state.hour : ''}
+- Four Pillars: ${sajuText}
+- Their question / struggle: ${concern}
+- Today: March 2026 (Year of Bing Wu 丙午)
+
+[Your Task]
+Write PART 3: "The Energy Shift Coming Your Way"
+
+Describe the key energy shift or turning point visible in their chart over the next 1-3 months. What changes in the elemental dynamics? What opportunity or challenge is approaching? Give them a sense of the broader flow — where things are heading and what to be ready for.
+
+End with this exact sentence: "This is where your Spark Reading ends — but if you want to see the full map of your next three years, the turning points ahead, and your complete destiny playbook, your Soul Blueprint holds all of it."
+
+[Guidelines]
+- 3 paragraphs, 350-450 words total
+- No headers, no bullets, plain text only
+- Chinese characters always followed by English in parentheses
+- Hopeful, forward-looking, empowering tone`
+  ];
+  return prompts[index] || prompts[0];
+}
+
+function buildPartsUI(parts) {
+  document.getElementById('parts-container').innerHTML = (parts || PARTS).map((p,i) => `
     <div class="part-card" id="part-card-${i}">
       <div class="part-header">
         <span class="part-num">${p.num}</span>
@@ -875,13 +1064,16 @@ function buildPartsUI() {
     </div>`).join('');
 }
 
-async function runPremiumAnalysis() {
-  const concern = state.concern || document.getElementById('inp-concern')?.value?.trim() || '';
+async function runPremiumAnalysis(parts, promptBuilder) {
+  const partsArr = parts || PARTS;
+  const builder = promptBuilder || buildPartPrompt;
+  const concern = state.concern || '';
   const ps = state.sajuInfo;
   sessionStorage.setItem('saju_state', JSON.stringify({ name:state.name, year:state.year, month:state.month, day:state.day, hour:state.hour, gender:state.gender, concern, sajuInfo:ps }));
-  for (let i = 0; i < PARTS.length; i++) {
-    await analyzePartWithRetry(i, concern, ps);
-    updateProgressBar(i + 1);
+  document.getElementById('progress-count').textContent = `0 / ${partsArr.length}`;
+  for (let i = 0; i < partsArr.length; i++) {
+    await analyzePartWithRetry(i, concern, ps, builder);
+    updateProgressBar(i + 1, partsArr.length);
   }
   document.getElementById('progress-label').textContent = 'Reading complete ✓';
   setTimeout(() => {
@@ -890,10 +1082,11 @@ async function runPremiumAnalysis() {
   }, 800);
 }
 
-async function analyzePartWithRetry(i, concern, ps) {
+async function analyzePartWithRetry(i, concern, ps, promptBuilder) {
   updateProgress(i, 'Analyzing...');
   showPartError(i, false);
-  const prompt = buildPartPrompt(i, concern, ps);
+  const builder = promptBuilder || buildPartPrompt;
+  const prompt = builder(i, concern, ps);
   let success = false;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
@@ -962,9 +1155,10 @@ function updateProgress(index, statusText, done=false) {
   if (label) label.textContent = `Analyzing ${PARTS[index].num}...`;
 }
 
-function updateProgressBar(done) {
-  document.getElementById('progress-bar').style.width = `${(done/PARTS.length)*100}%`;
-  document.getElementById('progress-count').textContent = `${done} / ${PARTS.length}`;
+function updateProgressBar(done, total) {
+  const t = total || PARTS.length;
+  document.getElementById('progress-bar').style.width = `${(done/t)*100}%`;
+  document.getElementById('progress-count').textContent = `${done} / ${t}`;
 }
 
 function getAllAnalysisText() {
@@ -1000,7 +1194,6 @@ function showError(msg) { const el = document.getElementById('error-msg'); el.te
 function hideError() { document.getElementById('error-msg').style.display = 'none'; }
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-buildToc();
 showScreen('screen-input');
 </script>
 
