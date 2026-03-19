@@ -1206,7 +1206,12 @@ function devTest(tier) {
   state.concern = 'I keep struggling with career direction. I feel stuck and unsure whether to stay in my current job or make a big change. This pattern of indecision has repeated for years.';
   const saju = calcSaju(1990, 3, 15, state.hour);
   state.sajuInfo = { ...saju, title: 'Your Four Pillars Reading' };
-  proceedToAnalysis(tier);
+  sessionStorage.setItem('pending_tier', tier);
+  if (tier === 'spark') {
+    document.getElementById('upsell-overlay').style.display = 'flex';
+  } else {
+    proceedToAnalysis(tier);
+  }
 }
 
 showScreen('screen-input');
