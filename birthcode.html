@@ -869,39 +869,33 @@ function animateLoading() {
 }
 
 // ==================== 결제 (Lemon Squeezy) ====================
-const LS_VARIANT_SPARK  = '1439690'; // $2.99 Spark Reading
-const LS_VARIANT_UNLOCK = '1439714'; // $6.99 Blueprint Unlocked
-const LS_VARIANT_SOUL   = '1439715'; // $9.99 Soul Blueprint
+const LS_URL_SPARK  = 'https://birth-code.lemonsqueezy.com/checkout/buy/a695a019-653a-480d-b6e6-ea5084ab5e64'; // $2.99 Spark Reading
+const LS_URL_UNLOCK = 'https://birth-code.lemonsqueezy.com/checkout/buy/6d31ceac-5b5f-48ae-ad8e-4517e775a289'; // $6.99 Blueprint Unlocked
+const LS_URL_SOUL   = 'https://birth-code.lemonsqueezy.com/checkout/buy/314a64a1-7d70-4e78-98c2-75722a09f4fb'; // $9.99 Soul Blueprint
 
 let currentTier = 'soul'; // 'spark' | 'soul' | 'unlock'
 
 window.addEventListener('DOMContentLoaded', function() {
-  // Lemon Squeezy 이벤트 리스너
-  window.createLemonSqueezy && window.createLemonSqueezy();
-  window.LemonSqueezy && LemonSqueezy.Setup({
-    eventHandler: function(event) {
-      if (event.event === 'Checkout.Success') {
-        const tier = sessionStorage.getItem('pending_tier') || 'soul';
-        const savedState = sessionStorage.getItem('pending_payment_state');
-        if (savedState) {
-          try { Object.assign(state, JSON.parse(savedState)); } catch(e) {}
-        }
-        LemonSqueezy.Url.Close();
-        proceedToAnalysis(tier);
-      } else if (event.event === 'Checkout.Close') {
-        document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(function(b) { b.disabled = false; });
-      }
+  // Lemon Squeezy 초기화 및 이벤트 리스너
+  if (window.createLemonSqueezy) window.createLemonSqueezy();
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.event === 'Checkout.Success') {
+      const tier = sessionStorage.getItem('pending_tier') || 'soul';
+      const savedState = sessionStorage.getItem('pending_payment_state');
+      if (savedState) { try { Object.assign(state, JSON.parse(savedState)); } catch(err) {} }
+      if (window.LemonSqueezy) LemonSqueezy.Url.Close();
+      proceedToAnalysis(tier);
+    } else if (e.data && e.data.event === 'Checkout.Close') {
+      document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(function(b) { b.disabled = false; });
     }
   });
 
-  // URL 파라미터로 결제 성공 처리 (fallback)
+  // URL 파라미터 결제 성공 처리 (fallback)
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('ls_success') === '1') {
     history.replaceState({}, '', window.location.pathname);
     const savedState = sessionStorage.getItem('pending_payment_state');
-    if (savedState) {
-      try { Object.assign(state, JSON.parse(savedState)); } catch(e) {}
-    }
+    if (savedState) { try { Object.assign(state, JSON.parse(savedState)); } catch(e) {} }
     const savedTier = sessionStorage.getItem('pending_tier') || 'soul';
     proceedToAnalysis(savedTier);
   }
@@ -913,13 +907,13 @@ async function startPremium() {
 
 async function startPremiumWith(tier) {
   currentTier = tier;
-  const variantId = tier === 'spark' ? LS_VARIANT_SPARK : LS_VARIANT_SOUL;
-  await requestLSPayment(variantId, tier);
+  const url = tier === 'spark' ? LS_URL_SPARK : LS_URL_SOUL;
+  await requestLSPayment(url, tier);
 }
 
 async function acceptUpsell() {
   document.getElementById('upsell-overlay').style.display = 'none';
-  await requestLSPayment(LS_VARIANT_UNLOCK, 'unlock');
+  await requestLSPayment(LS_URL_UNLOCK, 'unlock');
 }
 
 function declineUpsell() {
@@ -927,24 +921,21 @@ function declineUpsell() {
   proceedToAnalysis('spark');
 }
 
-async function requestLSPayment(variantId, tier) {
+async function requestLSPayment(checkoutUrl, tier) {
   sessionStorage.setItem('pending_payment_state', JSON.stringify({
     name: state.name, year: state.year, month: state.month, day: state.day,
     hour: state.hour, gender: state.gender, concern: state.concern, sajuInfo: state.sajuInfo
   }));
   sessionStorage.setItem('pending_tier', tier);
-
   document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(b => { b.disabled = true; });
 
-  const checkoutUrl = `https://birth-code.lemonsqueezy.com/buy/${variantId}?checkout[custom][tier]=${tier}&checkout[success_url]=${encodeURIComponent(window.location.origin + window.location.pathname + '?ls_success=1')}`;
+  const fullUrl = checkoutUrl + '?checkout[success_url]=' + encodeURIComponent(window.location.origin + window.location.pathname + '?ls_success=1');
 
   try {
     if (window.LemonSqueezy) {
-      LemonSqueezy.Url.Open(checkoutUrl);
+      LemonSqueezy.Url.Open(fullUrl);
     } else {
-      // fallback: 직접 오버레이 열기
-      window.open(checkoutUrl, '_blank');
-      document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(b => { b.disabled = false; });
+      window.location.href = fullUrl;
     }
   } catch(e) {
     console.error('LemonSqueezy error:', e);
