@@ -265,11 +265,6 @@
     <button class="btn-primary" id="btn-analyze" onclick="goToChat()">✦ Begin Your Reading →</button>
     <div class="error-msg" id="error-msg"></div>
 
-    <!-- DEV TEST BUTTONS — 배포 전 제거 -->
-    <div id="dev-test-btns" style="margin-top:16px;display:flex;gap:8px;">
-      <button onclick="devTest('spark')" style="flex:1;padding:10px;background:rgba(201,168,76,0.1);border:1px dashed rgba(201,168,76,0.4);border-radius:10px;color:#c9a84c;font-size:12px;cursor:pointer;">DEV: Test Spark</button>
-      <button onclick="devTest('soul')" style="flex:1;padding:10px;background:rgba(123,94,167,0.1);border:1px dashed rgba(123,94,167,0.4);border-radius:10px;color:#a07fd4;font-size:12px;cursor:pointer;">DEV: Test Soul</button>
-    </div>
   </div>
 
   <!-- 채팅 화면 -->
@@ -407,6 +402,13 @@
         <button type="button" class="btn-share" onclick="shareEmail()">📧 Send to Email</button>
       </div>
       <div class="share-copied" id="share-copied"></div>
+      <div style="margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.05);">
+        <button type="button" onclick="restartReading()" style="background:transparent;border:1px solid var(--border);border-radius:10px;padding:12px 24px;color:var(--text-dim);font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;width:100%;"
+          onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold2)'"
+          onmouseout="this.style.borderColor='rgba(201,168,76,0.2)';this.style.color='var(--text-dim)'">
+          ✦ Begin a New Reading
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1198,6 +1200,24 @@ function showShareMsg(msg) {
   if (el) { el.textContent = msg; setTimeout(() => { el.textContent = ''; }, 3000); }
 }
 
+function restartReading() {
+  // 상태 초기화
+  state.name = ''; state.year = ''; state.month = ''; state.day = '';
+  state.hour = ''; state.gender = ''; state.concern = ''; state.sajuInfo = null;
+  chatHistory.length = 0; chatTurn = 0;
+  // 입력 필드 초기화
+  ['inp-name','inp-year','inp-day'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  const m = document.getElementById('inp-month'); if(m) m.value = '';
+  const h = document.getElementById('inp-hour'); if(h) h.value = '';
+  ['btn-male','btn-female','btn-nonbinary'].forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('active'); });
+  // 채팅 메시지 초기화
+  const cm = document.getElementById('chat-messages'); if(cm) cm.innerHTML = '';
+  sessionStorage.removeItem('pending_payment_state');
+  sessionStorage.removeItem('pending_tier');
+  showScreen('screen-input');
+  window.scrollTo(0, 0);
+}
+
 function showError(msg) { const el = document.getElementById('error-msg'); el.textContent = msg; el.style.display = 'block'; }
 function hideError() { document.getElementById('error-msg').style.display = 'none'; }
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -1224,18 +1244,6 @@ function showSparkUpsellBanner() {
 
   shareSection.parentNode.insertBefore(banner, shareSection);
   banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-// ==================== DEV TEST (배포 전 제거) ====================
-function devTest(tier) {
-  state.name = 'Test User';
-  state.year = '1990'; state.month = '3'; state.day = '15';
-  state.hour = '오시(11-13시)'; state.gender = '여';
-  state.concern = 'I keep struggling with career direction. I feel stuck and unsure whether to stay in my current job or make a big change. This pattern of indecision has repeated for years.';
-  const saju = calcSaju(1990, 3, 15, state.hour);
-  state.sajuInfo = { ...saju, title: 'Your Four Pillars Reading' };
-  sessionStorage.setItem('pending_tier', tier);
-  proceedToAnalysis(tier);
 }
 
 showScreen('screen-input');
