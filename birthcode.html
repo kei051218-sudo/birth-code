@@ -5,22 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BirthCode — Decode Your Four Pillars</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
-<script>
-  // Paddle Sandbox 설정
-  Paddle.Environment.set("sandbox");
-  Paddle.Initialize({
-    token: "test_10bb0f5f69b0daa7ab95ba142d6",
-    eventCallback: function(data) {
-      if (data.name === 'checkout.completed') {
-        const tier = sessionStorage.getItem('pending_tier') || 'soul';
-        proceedToAnalysis(tier);
-      } else if (data.name === 'checkout.closed') {
-        document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(function(b) { b.disabled = false; });
-      }
-    }
-  });
-</script>
+<script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
 <style>
   :root {
     --bg: #0a0a0f; --bg2: #11111a; --bg3: #1a1a28;
@@ -883,16 +868,35 @@ function animateLoading() {
   window._loadingInterval = setInterval(() => { i = (i+1) % loadingTexts.length; el.textContent = loadingTexts[i]; }, 1800);
 }
 
-// ==================== 결제 (Paddle) ====================
-const PADDLE_PRICE_SPARK  = 'pri_01km1wvc290h59bgxb3tk0thst'; // $2.99 Spark Reading
-const PADDLE_PRICE_UNLOCK = 'pri_01km21vg4as4gjtjhb9f5ht890'; // $6.99 Blueprint Unlocked
-const PADDLE_PRICE_SOUL   = 'pri_01km21q203y6zbca92s6ktasrj'; // $9.99 Soul Blueprint
+// ==================== 결제 (Lemon Squeezy) ====================
+const LS_VARIANT_SPARK  = '1439690'; // $2.99 Spark Reading
+const LS_VARIANT_UNLOCK = '1439714'; // $6.99 Blueprint Unlocked
+const LS_VARIANT_SOUL   = '1439715'; // $9.99 Soul Blueprint
 
 let currentTier = 'soul'; // 'spark' | 'soul' | 'unlock'
 
 window.addEventListener('DOMContentLoaded', function() {
+  // Lemon Squeezy 이벤트 리스너
+  window.createLemonSqueezy && window.createLemonSqueezy();
+  window.LemonSqueezy && LemonSqueezy.Setup({
+    eventHandler: function(event) {
+      if (event.event === 'Checkout.Success') {
+        const tier = sessionStorage.getItem('pending_tier') || 'soul';
+        const savedState = sessionStorage.getItem('pending_payment_state');
+        if (savedState) {
+          try { Object.assign(state, JSON.parse(savedState)); } catch(e) {}
+        }
+        LemonSqueezy.Url.Close();
+        proceedToAnalysis(tier);
+      } else if (event.event === 'Checkout.Close') {
+        document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(function(b) { b.disabled = false; });
+      }
+    }
+  });
+
+  // URL 파라미터로 결제 성공 처리 (fallback)
   const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('paddle_success') === '1') {
+  if (urlParams.get('ls_success') === '1') {
     history.replaceState({}, '', window.location.pathname);
     const savedState = sessionStorage.getItem('pending_payment_state');
     if (savedState) {
@@ -909,13 +913,13 @@ async function startPremium() {
 
 async function startPremiumWith(tier) {
   currentTier = tier;
-  const priceId = tier === 'spark' ? PADDLE_PRICE_SPARK : PADDLE_PRICE_SOUL;
-  await requestPaddlePayment(priceId, tier);
+  const variantId = tier === 'spark' ? LS_VARIANT_SPARK : LS_VARIANT_SOUL;
+  await requestLSPayment(variantId, tier);
 }
 
 async function acceptUpsell() {
   document.getElementById('upsell-overlay').style.display = 'none';
-  await requestPaddlePayment(PADDLE_PRICE_UNLOCK, 'unlock');
+  await requestLSPayment(LS_VARIANT_UNLOCK, 'unlock');
 }
 
 function declineUpsell() {
@@ -923,31 +927,29 @@ function declineUpsell() {
   proceedToAnalysis('spark');
 }
 
-async function requestPaddlePayment(priceId, tier) {
-  if (typeof Paddle === 'undefined') {
-    showPaymentError('Payment module failed to load. Please refresh and try again.');
-    return;
-  }
-
+async function requestLSPayment(variantId, tier) {
   sessionStorage.setItem('pending_payment_state', JSON.stringify({
     name: state.name, year: state.year, month: state.month, day: state.day,
     hour: state.hour, gender: state.gender, concern: state.concern, sajuInfo: state.sajuInfo
   }));
   sessionStorage.setItem('pending_tier', tier);
 
-  document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes').forEach(b => { b.disabled = true; });
+  document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(b => { b.disabled = true; });
+
+  const checkoutUrl = `https://birth-code.lemonsqueezy.com/buy/${variantId}?checkout[custom][tier]=${tier}&checkout[success_url]=${encodeURIComponent(window.location.origin + window.location.pathname + '?ls_success=1')}`;
 
   try {
-    Paddle.Checkout.open({
-      items: [{ priceId: priceId, quantity: 1 }],
-      customData: { name: state.name || 'Customer' },
-      settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' },
-      successUrl: window.location.origin + window.location.pathname + '?paddle_success=1',
-    });
+    if (window.LemonSqueezy) {
+      LemonSqueezy.Url.Open(checkoutUrl);
+    } else {
+      // fallback: 직접 오버레이 열기
+      window.open(checkoutUrl, '_blank');
+      document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(b => { b.disabled = false; });
+    }
   } catch(e) {
-    console.error('Paddle error:', e);
+    console.error('LemonSqueezy error:', e);
     showPaymentError('Something went wrong with payment. Please try again.');
-    document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes').forEach(b => { b.disabled = false; });
+    document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(b => { b.disabled = false; });
   }
 }
 
