@@ -506,7 +506,27 @@ function calcSaju(year, month, day, hourStr) {
   return { yearPillar, monthPillar, dayPillar, hourPillar };
 }
 
-// ==================== 상태 ====================
+// ==================== 날짜 자동화 ====================
+const _now = new Date();
+const TODAY_YEAR = _now.getFullYear();
+const TODAY_MONTH_EN = _now.toLocaleString('en-US', { month: 'long' });
+const TODAY_MONTH_NUM = _now.getMonth() + 1;
+
+function getYearGanji(year) {
+  const cheongan = ['庚','辛','壬','癸','甲','乙','丙','丁','戊','己'];
+  const jiji     = ['申','酉','戌','亥','子','丑','寅','卯','辰','巳','午','未'];
+  const cg = cheongan[(year - 2000 + 40) % 10];
+  const jj = jiji[(year - 2000 + 120) % 12];
+  const cgEn = ['Geng','Xin','Ren','Gui','Jia','Yi','Bing','Ding','Wu','Ji'][(year - 2000 + 40) % 10];
+  const jjEn = ['Shen','You','Xu','Hai','Zi','Chou','Yin','Mao','Chen','Si','Wu','Wei'][(year - 2000 + 120) % 12];
+  return { cg, jj, ganji: `${cg}${jj}`, ganjiEn: `${cgEn} ${jjEn}` };
+}
+
+const THIS_YEAR_GANJI = getYearGanji(TODAY_YEAR);
+const TODAY_DATE_EN = `${TODAY_MONTH_EN} ${TODAY_YEAR}`;
+const TODAY_DATE_KR = `${TODAY_YEAR}년 ${TODAY_MONTH_NUM}월`;
+const GANJI_STR_EN  = `${THIS_YEAR_GANJI.ganji} (${THIS_YEAR_GANJI.ganjiEn})`;
+const GANJI_STR_KR  = `${THIS_YEAR_GANJI.ganji}년`;
 
 // ==================== 상태 ====================
 const state = { name:'', year:'', month:'', day:'', hour:'', gender:'', concern:'', sajuInfo:null };
