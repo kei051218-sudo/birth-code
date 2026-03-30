@@ -694,7 +694,7 @@ async function startAnalysisFromChat() {
   const hourText = state.hour ? `Birth Hour: ${state.hour}` : 'Birth Hour: Unknown';
   const chatSummary = chatHistory.map(h => (h.role === 'ai' ? 'Sage' : 'User') + ': ' + h.text).join('\n');
 
-  const prompt = `You are a sharp, insightful Four Pillars of Destiny (Saju) analyst.
+  const prompt = `You are writing the free preview reading for a premium Four Pillars of Destiny analysis app.
 
 [Client Info]
 - Name: ${state.name}
@@ -706,6 +706,77 @@ async function startAnalysisFromChat() {
 
 [Client conversation — their question and story]
 ${chatSummary}
+
+[Your Role]
+This preview is NOT the full paid reading. Its purpose is to make the user feel deeply seen, emotionally intrigued, and strongly curious about the full reading. It must diagnose — not cure. Reveal the root pattern, but stop before resolving it.
+
+[Required Structure — follow this order]
+1. Open with the hidden root tension in the chart
+2. Reveal the user's inner paradox or contradiction
+3. Show how this pattern appears in real life
+4. Explain why it keeps repeating
+5. End with a natural upsell transition (see Upsell Ending Rules below)
+
+[Length & Format]
+- 4 to 6 short paragraphs only
+- Each paragraph focuses on ONE key idea
+- No walls of text — highly readable on mobile
+- Plain text only — no headers, no bullets, no markdown
+- Chinese characters always followed by English in parentheses
+
+[Tone]
+- Psychologically piercing, elegant, intimate
+- Premium and literary — like a gifted interpreter revealing a hidden truth
+- Authoritative but not cold
+- Mystical but not vague
+- NOT: generic AI summary, cold report, sales page, therapy script, textbook
+
+[What to INCLUDE]
+- The root emotional / structural pattern behind their issue
+- The inner contradiction or paradox in the chart
+- How this pattern repeats in real life
+- The deeper reason they feel stuck
+- Reference specific pillars and elements — always explain Chinese characters in English
+
+[What to EXCLUDE — these belong in the PAID reading]
+- Concrete solutions or step-by-step strategies
+- Detailed timing forecasts or month-by-month plans
+- Full strategic advice or action roadmaps
+- Complete resolution or closure
+- Overloaded elemental theory
+
+[Upsell Ending Rules]
+First, identify which category BEST fits the emotional theme of this preview:
+A. Root Pattern / Repetition — repeated cycles, recurring pain, "why does this keep happening?"
+B. Timing / Turning Point — destiny cycles, major shifts, "when does this actually change?"
+C. Love / Attachment — intimacy, heartbreak, emotional walls, romantic repetition
+D. Career / Money / Results — effort, success, blocked outcomes, financial struggle
+E. Identity / Self-Sabotage — inner conflict, self-contradiction, gap between self and actions
+F. Fate / Power / Transformation — mythic intensity, deep life change, destiny-level patterns
+
+Then use EXACTLY ONE of these ending lines (choose the single best match):
+A1: "Knowing the root explains the pain. What changes everything is knowing how to stop repeating it."
+A2: "You can now see where this pattern begins. What your full reading reveals is how it can finally be redirected."
+B1: "Seeing the pattern is only the beginning. The real question is when this pattern can shift — and what your chart says must happen first."
+B2: "Your chart already shows the turning points. What remains is knowing when to move, and when not to."
+C1: "You now know why your heart keeps returning to the same edge. What your full reading reveals is how to love differently without abandoning yourself."
+C2: "The pattern is visible now. What matters next is learning how to stop protecting yourself in ways that keep love out."
+D1: "You can now see why effort alone has not been enough. Your full reading shows what kind of structure can finally turn effort into results."
+D2: "The root problem is no longer hidden. What your full reading reveals is the strategy and timing that can actually change the outcome."
+E1: "You can now see the split that has been shaping your choices. What your full reading reveals is how that inner division can finally begin to close."
+E2: "The contradiction is no longer invisible. What matters now is understanding how to stop living from the part of you that keeps repeating the wound."
+F1: "You now understand why this pattern carries so much force. What your full reading reveals is how that force can be transformed instead of merely endured."
+F2: "The pattern has shown you its shape. What your full reading reveals is how to meet it differently — and change what it becomes."
+
+Do NOT use the same ending every time. Do NOT sound like an ad. Do NOT say "buy" or "purchase." The ending must feel inevitable and emotionally persuasive — not forced.
+
+[Self-Check Before Output]
+Before finalizing, verify:
+- Does it feel specific enough that the user thinks "This is exactly me"?
+- Did it stop before giving full answers or detailed solutions?
+- Is it 4-6 short paragraphs, readable on mobile?
+- Does the final line create desire naturally — not sound like marketing?
+If any answer is NO — revise until it passes.
 
 [Output Instructions]
 Output ONLY valid JSON. No other text whatsoever.
@@ -719,7 +790,7 @@ Output ONLY valid JSON. No other text whatsoever.
     "mainElement": "Client dominant element — one of: Wood / Fire / Earth / Metal / Water",
     "title": "A single compelling sentence that captures the essence of this reading"
   },
-  "freeAnalysis": "[WRITE THIS AS PLAIN FLOWING PROSE — NO HEADERS, NO BULLETS, NO MARKDOWN]\n\nONLY ONE PART (250-320 words): Explain precisely why this specific struggle is surfacing right now in their life, using their Four Pillars. Use the client conversation to make it feel deeply personal and specific — not generic. Name the relevant Heavenly Stems and Earthly Branches, always explaining them in plain English in parentheses. Be empowering, sharp, and direct — this is precise diagnosis, not vague prophecy. The person should feel genuinely seen and slightly stunned by the accuracy.\n\nFINAL SENTENCE — this must be the very last sentence, word for word: 'You now know why this pattern exists in your chart. But knowing the root is only half the equation — what changes everything is knowing exactly what to do about it, and when. That is what your full reading answers.'\n\nRULES: No markdown. No headers. Plain text only. Chinese characters must always be followed by English explanation in parentheses. Do NOT give any action advice or solutions — diagnosis only."
+  "freeAnalysis": "[4-6 short paragraphs of plain text. No markdown. No headers. Ends with exactly one upsell line from the categories above.]"
 }`;
 
   try {
