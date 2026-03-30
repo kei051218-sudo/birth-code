@@ -999,6 +999,7 @@ function declineUpsell() {
 
 
 function proceedToAnalysis(tier) {
+  sessionStorage.setItem('pending_tier', tier);
   sessionStorage.setItem('pending_payment_state', JSON.stringify({
     name: state.name, year: state.year, month: state.month, day: state.day,
     hour: state.hour, gender: state.gender, concern: state.concern, sajuInfo: state.sajuInfo
