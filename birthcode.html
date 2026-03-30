@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BirthCode — Decode Your Four Pillars</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://www.paypal.com/sdk/js?client-id=AfKNUnU6x-ifBPSkTlD2p_soXci9woNdSAciSLMxpNXeHLa0q8-PJevHyIP2HNcIpXQaFI6y28heEd_I&currency=USD&intent=capture" defer></script>
+<script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
 <style>
   :root {
     --bg: #0a0a0f; --bg2: #11111a; --bg3: #1a1a28;
@@ -91,8 +91,22 @@
   .part-title-text { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text); font-weight: 600; }
   .part-status { margin-left: auto; font-size: 12px; color: var(--text-dim); flex-shrink: 0; }
   .part-status.done { color: var(--gold); }
-  .part-content { padding: 20px; font-size: 14px; line-height: 1.9; color: var(--text); white-space: pre-line; text-align: left; display: none; }
+  .part-content { padding: 20px 24px 28px; font-size: 14px; line-height: 2.0; color: var(--text); text-align: left; display: none; }
   .part-content.visible { display: block; }
+  /* Core Insight */
+  .pc-core-insight { background: rgba(201,168,76,0.08); border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; padding: 12px 16px; margin-bottom: 24px; font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 700; color: var(--gold2); line-height: 1.5; }
+  /* 소제목 */
+  .pc-subheading { font-size: 13px; font-weight: 600; color: var(--gold); letter-spacing: 0.3px; margin: 22px 0 8px; text-transform: none; }
+  /* 본문 문단 */
+  .pc-paragraph { font-size: 14px; line-height: 2.0; color: var(--text); margin-bottom: 16px; }
+  /* Emphasis Line */
+  .pc-emphasis { border: 1px solid rgba(201,168,76,0.25); border-radius: 8px; padding: 12px 16px; margin: 20px 0; font-family: 'Cormorant Garamond', serif; font-size: 15px; font-style: italic; color: var(--gold2); line-height: 1.6; text-align: center; }
+  /* What This Means / Action Focus */
+  .pc-section-label { font-size: 11px; letter-spacing: 1.5px; color: var(--accent2); margin: 22px 0 6px; font-weight: 600; }
+  /* Action Focus 박스 */
+  .pc-action { background: rgba(123,94,167,0.1); border: 1px solid rgba(123,94,167,0.3); border-radius: 8px; padding: 12px 16px; margin: 8px 0 16px; font-size: 14px; color: var(--text); line-height: 1.9; }
+  /* Closing Line */
+  .pc-closing { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-style: italic; color: var(--text-dim); line-height: 1.7; margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.05); }
   .share-section { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-top: 24px; text-align: center; }
   .share-title { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--gold); margin-bottom: 6px; }
   .share-desc { font-size: 12px; color: var(--text-dim); margin-bottom: 16px; line-height: 1.6; }
@@ -688,7 +702,7 @@ async function startAnalysisFromChat() {
 - Birth Hour: ${state.hour ? state.hour : 'Unknown'}
 - Gender: ${state.gender === '남' ? 'Male' : state.gender === '여' ? 'Female' : 'Not specified'}
 - Four Pillars (already calculated — do NOT change): ${sajuText}
-- Today: March 2026 (Year of Bing Wu 丙午, client is ${new Date().getFullYear() - solarYear} years old)
+- Today: ${TODAY_DATE_EN} (Year of ${GANJI_STR_EN}, client is ${TODAY_YEAR - solarYear} years old)
 
 [Client conversation — their question and story]
 ${chatSummary}
@@ -870,99 +884,38 @@ function animateLoading() {
   window._loadingInterval = setInterval(() => { i = (i+1) % loadingTexts.length; el.textContent = loadingTexts[i]; }, 1800);
 }
 
-// ==================== 결제 (PayPal) ====================
-const PAYPAL_PRICES = {
-  spark:  { amount: '2.99', label: 'Spark Reading' },
-  soul:   { amount: '9.99', label: 'Soul Blueprint' },
-  unlock: { amount: '6.99', label: 'Blueprint Unlocked' },
-};
+// ==================== 결제 (Lemon Squeezy) ====================
+const LS_URL_SPARK  = 'https://birth-code.lemonsqueezy.com/checkout/buy/a695a019-653a-480d-b6e6-ea5084ab5e64'; // $2.99 Spark Reading
+const LS_URL_UNLOCK = 'https://birth-code.lemonsqueezy.com/checkout/buy/6d31ceac-5b5f-48ae-ad8e-4517e775a289'; // $6.99 Blueprint Unlocked
+const LS_URL_SOUL   = 'https://birth-code.lemonsqueezy.com/checkout/buy/314a64a1-7d70-4e78-98c2-75722a09f4fb'; // $9.99 Soul Blueprint
 
-let currentTier = 'soul';
-let paypalModal = null;
+let currentTier = 'soul'; // 'spark' | 'soul' | 'unlock'
 
-function createPayPalModal(tier) {
-  // 기존 모달 제거
-  const existing = document.getElementById('paypal-modal-overlay');
-  if (existing) existing.remove();
-
-  const { amount, label } = PAYPAL_PRICES[tier];
-
-  const overlay = document.createElement('div');
-  overlay.id = 'paypal-modal-overlay';
-  overlay.style.cssText = `
-    position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;
-    display:flex;align-items:center;justify-content:center;padding:20px;
-    animation:fadeIn 0.3s ease;
-  `;
-
-  overlay.innerHTML = `
-    <div style="background:#1a1a28;border:1px solid rgba(201,168,76,0.3);border-radius:20px;
-      padding:32px 24px;width:100%;max-width:420px;position:relative;">
-      <button onclick="closePayPalModal()" style="position:absolute;top:16px;right:16px;
-        background:transparent;border:none;color:#8a8478;font-size:20px;cursor:pointer;line-height:1;">✕</button>
-      <div style="text-align:center;margin-bottom:24px;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#e8c97a;font-weight:700;margin-bottom:6px;">${label}</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:32px;color:#e8c97a;font-weight:700;">$${amount}</div>
-        <div style="font-size:12px;color:#8a8478;margin-top:4px;">one-time payment</div>
-      </div>
-      <div id="paypal-button-container" style="min-height:50px;"></div>
-      <div id="paypal-error-msg" style="color:#e07070;font-size:13px;text-align:center;padding:8px 0;display:none;"></div>
-    </div>
-  `;
-
-  document.body.appendChild(overlay);
-
-  // 배경 클릭 시 닫기
-  overlay.addEventListener('click', function(e) {
-    if (e.target === overlay) closePayPalModal();
+window.addEventListener('DOMContentLoaded', function() {
+  // Lemon Squeezy 초기화 및 이벤트 리스너
+  if (window.createLemonSqueezy) window.createLemonSqueezy();
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.event === 'Checkout.Success') {
+      const tier = sessionStorage.getItem('pending_tier') || 'soul';
+      const savedState = sessionStorage.getItem('pending_payment_state');
+      if (savedState) { try { Object.assign(state, JSON.parse(savedState)); } catch(err) {} }
+      if (window.LemonSqueezy) LemonSqueezy.Url.Close();
+      proceedToAnalysis(tier);
+    } else if (e.data && e.data.event === 'Checkout.Close') {
+      document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(function(b) { b.disabled = false; });
+    }
   });
 
-  // PayPal 버튼 렌더링
-  if (window.paypal) {
-    window.paypal.Buttons({
-      style: {
-        layout: 'vertical',
-        color: 'gold',
-        shape: 'rect',
-        label: 'pay',
-        height: 48,
-      },
-      createOrder: function(data, actions) {
-        return actions.order.create({
-          purchase_units: [{
-            amount: { value: amount, currency_code: 'USD' },
-            description: 'BirthCode — ' + label,
-          }]
-        });
-      },
-      onApprove: function(data, actions) {
-        return actions.order.capture().then(function(details) {
-          closePayPalModal();
-          const tier = currentTier;
-          proceedToAnalysis(tier);
-        });
-      },
-      onCancel: function() {
-        document.querySelectorAll('.btn-select-soul,.btn-select-spark,.btn-upsell-yes,.btn-upsell-banner').forEach(b => { b.disabled = false; });
-      },
-      onError: function(err) {
-        console.error('PayPal error:', err);
-        const errEl = document.getElementById('paypal-error-msg');
-        if (errEl) { errEl.textContent = 'Payment failed. Please try again.'; errEl.style.display = 'block'; }
-        document.querySelectorAll('.btn-select-soul,.btn-select-spark,.btn-upsell-yes,.btn-upsell-banner').forEach(b => { b.disabled = false; });
-      }
-    }).render('#paypal-button-container');
-  } else {
-    const errEl = document.getElementById('paypal-error-msg');
-    if (errEl) { errEl.textContent = 'Payment module failed to load. Please refresh and try again.'; errEl.style.display = 'block'; }
+  // URL 파라미터 결제 성공 처리 (fallback)
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('ls_success') === '1') {
+    history.replaceState({}, '', window.location.pathname);
+    const savedState = sessionStorage.getItem('pending_payment_state');
+    if (savedState) { try { Object.assign(state, JSON.parse(savedState)); } catch(e) {} }
+    const savedTier = sessionStorage.getItem('pending_tier') || 'soul';
+    proceedToAnalysis(savedTier);
   }
-}
-
-function closePayPalModal() {
-  const overlay = document.getElementById('paypal-modal-overlay');
-  if (overlay) overlay.remove();
-  document.querySelectorAll('.btn-select-soul,.btn-select-spark,.btn-upsell-yes,.btn-upsell-banner').forEach(b => { b.disabled = false; });
-}
+});
 
 async function startPremium() {
   await startPremiumWith('soul');
@@ -970,25 +923,13 @@ async function startPremium() {
 
 async function startPremiumWith(tier) {
   currentTier = tier;
-  sessionStorage.setItem('pending_payment_state', JSON.stringify({
-    name: state.name, year: state.year, month: state.month, day: state.day,
-    hour: state.hour, gender: state.gender, concern: state.concern, sajuInfo: state.sajuInfo
-  }));
-  sessionStorage.setItem('pending_tier', tier);
-  document.querySelectorAll('.btn-select-soul,.btn-select-spark,.btn-upsell-yes,.btn-upsell-banner').forEach(b => { b.disabled = true; });
-  createPayPalModal(tier);
+  const url = tier === 'spark' ? LS_URL_SPARK : LS_URL_SOUL;
+  await requestLSPayment(url, tier);
 }
 
 async function acceptUpsell() {
   document.getElementById('upsell-overlay').style.display = 'none';
-  currentTier = 'unlock';
-  sessionStorage.setItem('pending_payment_state', JSON.stringify({
-    name: state.name, year: state.year, month: state.month, day: state.day,
-    hour: state.hour, gender: state.gender, concern: state.concern, sajuInfo: state.sajuInfo
-  }));
-  sessionStorage.setItem('pending_tier', 'unlock');
-  document.querySelectorAll('.btn-select-soul,.btn-select-spark,.btn-upsell-yes,.btn-upsell-banner').forEach(b => { b.disabled = true; });
-  createPayPalModal('unlock');
+  await requestLSPayment(LS_URL_UNLOCK, 'unlock');
 }
 
 function declineUpsell() {
@@ -996,10 +937,32 @@ function declineUpsell() {
   proceedToAnalysis('spark');
 }
 
+async function requestLSPayment(checkoutUrl, tier) {
+  sessionStorage.setItem('pending_payment_state', JSON.stringify({
+    name: state.name, year: state.year, month: state.month, day: state.day,
+    hour: state.hour, gender: state.gender, concern: state.concern, sajuInfo: state.sajuInfo
+  }));
+  sessionStorage.setItem('pending_tier', tier);
+  document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(b => { b.disabled = true; });
+
+  const fullUrl = checkoutUrl + '?checkout[success_url]=' + encodeURIComponent(window.location.origin + window.location.pathname + '?ls_success=1');
+
+  try {
+    if (window.LemonSqueezy) {
+      LemonSqueezy.Url.Open(fullUrl);
+    } else {
+      window.location.href = fullUrl;
+    }
+  } catch(e) {
+    console.error('LemonSqueezy error:', e);
+    showPaymentError('Something went wrong with payment. Please try again.');
+    document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(b => { b.disabled = false; });
+  }
+}
+
 
 
 function proceedToAnalysis(tier) {
-  sessionStorage.setItem('pending_tier', tier);
   sessionStorage.setItem('pending_payment_state', JSON.stringify({
     name: state.name, year: state.year, month: state.month, day: state.day,
     hour: state.hour, gender: state.gender, concern: state.concern, sajuInfo: state.sajuInfo
@@ -1040,72 +1003,64 @@ const SPARK_PARTS = [
 function buildSparkPartPrompt(index, concern, ps) {
   const part = SPARK_PARTS[index];
   const sajuText = `Year Pillar: ${ps?.yearPillar||'unknown'}, Month Pillar: ${ps?.monthPillar||'unknown'}, Day Pillar: ${ps?.dayPillar||'unknown'}${ps?.hourPillar ? ', Hour Pillar: '+ps.hourPillar : ''}`;
-  const prompts = [
-    `You are an expert Four Pillars of Destiny analyst writing PART 1 of a Spark Reading.
-
-[Client Info]
-- Name: ${state.name}${state.gender !== 'nb' ? ' (' + (state.gender === '남' ? 'Male' : 'Female') + ')' : ''}
+  const clientInfo = `- Name: ${state.name}${state.gender !== 'nb' ? ' (' + (state.gender === '남' ? 'Male' : 'Female') + ')' : ''}
 - Date of Birth: ${state.month}/${state.day}/${state.year}${state.hour ? ', Birth Hour: ' + state.hour : ''}
 - Four Pillars: ${sajuText}
 - Their question / struggle: ${concern}
-- Today: March 2026 (Year of Bing Wu 丙午, client is ${new Date().getFullYear() - parseInt(state.year)} years old)
+- Today: ${TODAY_DATE_EN} (Year of ${GANJI_STR_EN}, client is ${TODAY_YEAR - parseInt(state.year)} years old)`;
 
-[Your Task]
-Write PART 1: "Why This Pattern Is Surfacing Right Now"
+  const template = `[REQUIRED OUTPUT FORMAT]
 
-Explain precisely why this specific struggle is appearing in their life at this exact moment — using their Four Pillars chart. Go deep into the elemental dynamics, Heavenly Stems and Earthly Branches at play. Connect everything directly to what they shared. The person should feel genuinely seen and slightly stunned by the accuracy.
+Core Insight
+[One sentence, 12-20 words, capturing the key point of this part.]
 
-[Guidelines]
-- 3 natural paragraphs, 400-500 words total
-- No headers, no bullets, plain text only
-- Chinese characters always followed by English in parentheses
-- Warm, sharp, empowering tone — trusted advisor, not fortune teller
-- No action advice in this part — diagnosis only`,
+**[Subheading 1]**
+[2-4 sentences]
 
-    `You are an expert Four Pillars of Destiny analyst writing PART 2 of a Spark Reading.
+**[Subheading 2]**
+[2-4 sentences]
 
-[Client Info]
-- Name: ${state.name}${state.gender !== 'nb' ? ' (' + (state.gender === '남' ? 'Male' : 'Female') + ')' : ''}
-- Date of Birth: ${state.month}/${state.day}/${state.year}${state.hour ? ', Birth Hour: ' + state.hour : ''}
-- Four Pillars: ${sajuText}
-- Their question / struggle: ${concern}
-- Today: March 2026 (Year of Bing Wu 丙午)
+**[Subheading 3]**
+[2-4 sentences]
 
-[Your Task]
-Write PART 2: "Your Action Plan for This Month"
+> **[One strong emphasis sentence.]**
 
-Give 2-3 concrete, time-bound actions tied directly to their elemental energy and current chart dynamics. Specify "this week" or "this month" for each. Make every action feel personally tailored — not generic advice. Connect each action back to what they shared about their situation.
+What This Means for You
+[2-3 sentences]
 
-[Guidelines]
-- 3 paragraphs, 350-450 words total
-- No headers, no bullets, plain text only
-- Chinese characters always followed by English in parentheses
-- Practical, grounded, actionable tone`,
+Action Focus
+[1-2 sentences of concrete action]
 
-    `You are an expert Four Pillars of Destiny analyst writing PART 3 of a Spark Reading.
+Closing Line
+[One final sentence]`;
 
-[Client Info]
-- Name: ${state.name}${state.gender !== 'nb' ? ' (' + (state.gender === '남' ? 'Male' : 'Female') + ')' : ''}
-- Date of Birth: ${state.month}/${state.day}/${state.year}${state.hour ? ', Birth Hour: ' + state.hour : ''}
-- Four Pillars: ${sajuText}
-- Their question / struggle: ${concern}
-- Today: March 2026 (Year of Bing Wu 丙午)
-
-[Your Task]
-Write PART 3: "The Energy Shift Coming Your Way"
-
-Describe the key energy shift or turning point visible in their chart over the next 1-3 months. What changes in the elemental dynamics? What opportunity or challenge is approaching? Give them a sense of the broader flow — where things are heading and what to be ready for.
-
-End with this exact sentence: "This is where your Spark Reading ends — but if you want to see the full map of your next three years, the turning points ahead, and your complete destiny playbook, your Soul Blueprint holds all of it."
-
-[Guidelines]
-- 3 paragraphs, 350-450 words total
-- No headers, no bullets, plain text only
-- Chinese characters always followed by English in parentheses
-- Hopeful, forward-looking, empowering tone`
+  const tasks = [
+    {title: 'Why This Pattern Is Surfacing Right Now', task: 'Explain precisely why this struggle is surfacing right now using their chart. Connect to what they shared. Diagnosis only — no action advice. Subheadings: Why/How/What interpretation style.'},
+    {title: 'Your Action Plan for This Month', task: 'Give concrete, time-bound actions tied to their elemental energy. Every action must be chart-specific and situation-specific. Subheadings should cover: current energy, first action, what to protect against.'},
+    {title: 'The Energy Shift Coming Your Way', task: 'Describe the key energy shift visible in the chart over the next 1-3 months. End Closing Line with this exact text: "This is where your Spark Reading ends — but if you want to see the full map of your next three years, the turning points ahead, and your complete destiny playbook, your Soul Blueprint holds all of it."'}
   ];
-  return prompts[index] || prompts[0];
+
+  const t = tasks[index] || tasks[0];
+  return `You are an expert Four Pillars of Destiny analyst writing PART ${index+1} of a Spark Reading.
+
+[Client Info]
+${clientInfo}
+
+[Your Task]
+Write PART ${index+1}: "${t.title}"
+${t.task}
+
+${template}
+
+[Rules]
+- Chinese characters always followed by English in parentheses on first use
+- Subheadings must be interpretation-style ("Why...", "How...", "What...")
+- Max 4 sentences per block
+- Tone: trusted advisor — warm, sharp, empowering
+- Output with exact markdown markers shown above (**, >, Core Insight, What This Means for You, Action Focus, Closing Line)
+- Do NOT output JSON`;
 }
+
 
 function buildPartsUI(parts) {
   document.getElementById('parts-container').innerHTML = (parts || PARTS).map((p,i) => `
@@ -1175,36 +1130,143 @@ function showPartError(i, show) {
 
 function buildPartPrompt(index, concern, ps) {
   const part = PARTS[index];
-  const sajuText = `년주 ${ps?.yearPillar||'미상'}, 월주 ${ps?.monthPillar||'미상'}, 일주 ${ps?.dayPillar||'미상'}${ps?.hourPillar ? ', 시주 '+ps.hourPillar : ''}`;
-  const hourText = state.hour || '모름';
-  return `You are an expert Four Pillars of Destiny analyst.
+  const sajuText = `Year Pillar: ${ps?.yearPillar||'unknown'}, Month Pillar: ${ps?.monthPillar||'unknown'}, Day Pillar: ${ps?.dayPillar||'unknown'}${ps?.hourPillar ? ', Hour Pillar: '+ps.hourPillar : ''}`;
+  const hourText = state.hour || 'Unknown';
+  return `You are an expert Four Pillars of Destiny analyst writing a premium destiny reading report.
 
 [Client Info]
 - Name: ${state.name}${state.gender !== 'nb' ? ' (' + (state.gender === '남' ? 'Male' : 'Female') + ')' : ''}
 - Date of Birth: ${state.month}/${state.day}/${state.year}, Birth Hour: ${hourText}
 - Four Pillars: ${sajuText}
 - Their question / struggle: ${concern}
-- Today: March 2026 (Year of Bing Wu 丙午, client is ${new Date().getFullYear() - parseInt(state.year)} years old)
-- Important: Base all luck cycle analysis on 2026. Do not dwell on 2024-2025.
+- Today: ${TODAY_DATE_EN} (Year of ${GANJI_STR_EN}, client is ${TODAY_YEAR - parseInt(state.year)} years old)
+- Important: Base all luck cycle analysis on ${TODAY_YEAR}.
 
 [Your Task]
-Write ${part.num}: "${part.title}" — a deep, personalised analysis.
+Write ${part.num}: "${part.title}" using the EXACT template structure below.
 
-[Writing Guidelines]
-- Apply Four Pillars theory concretely and specifically to their chart
-- Connect everything directly to their question and situation
-- Write in 3-4 natural paragraphs — no headers or sub-titles
-- Length: 600-800 words. Every sentence must be complete.
-- Use the client's name naturally to keep it personal
-- When using Chinese characters, always follow with plain English in parentheses
-- Tone: warm, insightful, empowering — like a trusted advisor, not a fortune teller
-- No markdown formatting whatsoever
-- Plain text only — no JSON`;
+[REQUIRED OUTPUT FORMAT]
+
+Core Insight
+[One powerful sentence, 12-20 words, capturing the entire point. Declarative. Not "This part will explain..."]
+
+**[Subheading 1 — e.g. "Why this keeps happening"]**
+[2-4 sentences connecting their actual struggle to their chart structure.]
+
+**[Subheading 2 — e.g. "How your elements create this pattern"]**
+[2-4 sentences on Four Pillars / elemental dynamics. Name specific pillars with English in parentheses.]
+
+**[Subheading 3 — e.g. "How this shows up in your daily life"]**
+[2-4 sentences translating chart dynamics into real behaviors or patterns the client recognizes.]
+
+> **[One strong emphasis sentence — short, bold, decisive.]**
+
+**[Subheading 4 — e.g. "What keeps the cycle repeating"]**
+[2-4 sentences — the deepest insight. What is the chart really trying to correct?]
+
+What This Means for You
+[2-3 sentences reframing for the client personally. Answer: "so what does this mean for me?"]
+
+Action Focus
+[1-2 sentences of concrete, specific, time-bound action.]
+
+Closing Line
+[One final sentence. Short, authoritative, emotionally resonant.]
+
+[Rules]
+- Use client name 1-2 times naturally
+- Chinese characters always followed by English in parentheses on first use
+- Subheadings must be interpretation-style ("Why...", "How...", "What...") — never "Analysis" or "Overview"
+- Max 4 sentences per block — no long walls of text
+- Tone: trusted advisor — warm, sharp, empowering
+- Output with exact markdown markers shown above (**, >, Core Insight, What This Means for You, Action Focus, Closing Line)
+- Do NOT output JSON`;
 }
 
 function renderPartContent(index, text) {
   const content = document.getElementById(`part-content-${index}`);
-  content.textContent = text.replace(/\*\*([^*]+)\*\*/g,'$1').replace(/\*([^*]+)\*/g,'$1');
+
+  // 마크다운 파싱 함수
+  function parseBlock(raw) {
+    if (!raw) return '';
+    const lines = raw.split('\n');
+    let html = '';
+    let paraBuffer = [];
+
+    function flushPara() {
+      if (paraBuffer.length > 0) {
+        html += `<p class="pc-paragraph">${paraBuffer.join(' ')}</p>`;
+        paraBuffer = [];
+      }
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) { flushPara(); continue; }
+
+      // Core Insight
+      if (/^core insight$/i.test(line)) {
+        flushPara();
+        const next = lines[i+1]?.trim() || '';
+        html += `<div class="pc-core-insight">${next.replace(/\*\*/g,'')}</div>`;
+        i++;
+        continue;
+      }
+      // What This Means for You
+      if (/^what this means for you$/i.test(line)) {
+        flushPara();
+        html += `<div class="pc-section-label">WHAT THIS MEANS FOR YOU</div>`;
+        continue;
+      }
+      // Action Focus
+      if (/^action focus$/i.test(line)) {
+        flushPara();
+        html += `<div class="pc-section-label">ACTION FOCUS</div>`;
+        continue;
+      }
+      // Closing Line
+      if (/^closing line$/i.test(line)) {
+        flushPara();
+        const next = lines[i+1]?.trim() || '';
+        if (next) {
+          html += `<p class="pc-closing">${next.replace(/\*\*/g,'')}</p>`;
+          i++;
+        }
+        continue;
+      }
+      // Emphasis Line (> **text** 또는 > text)
+      if (/^>/.test(line)) {
+        flushPara();
+        const emphText = line.replace(/^>\s*/, '').replace(/\*\*/g,'');
+        html += `<div class="pc-emphasis">${emphText}</div>`;
+        continue;
+      }
+      // Action Focus 내용 (section-label 바로 다음)
+      if (html.endsWith('</div>') && html.includes('ACTION FOCUS')) {
+        const lastLabel = html.lastIndexOf('pc-section-label');
+        const afterLabel = html.substring(lastLabel);
+        if (!afterLabel.includes('pc-action') && !afterLabel.includes('pc-paragraph') && !line.startsWith('**')) {
+          flushPara();
+          html += `<div class="pc-action">${line.replace(/\*\*/g,'')}</div>`;
+          continue;
+        }
+      }
+      // 소제목 (**bold** 단독 줄)
+      if (/^\*\*.+\*\*$/.test(line)) {
+        flushPara();
+        const subText = line.replace(/\*\*/g,'');
+        html += `<div class="pc-subheading">${subText}</div>`;
+        continue;
+      }
+      // 일반 본문
+      const cleaned = line.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>');
+      paraBuffer.push(cleaned);
+    }
+    flushPara();
+    return html;
+  }
+
+  content.innerHTML = parseBlock(text);
   content.classList.add('visible');
   setTimeout(() => { content.closest('.part-card').scrollIntoView({ behavior:'smooth', block:'start' }); }, 100);
 }
@@ -1225,7 +1287,7 @@ function updateProgressBar(done, total) {
 function getAllAnalysisText() {
   const nameLabel = (state.name ? state.name + "'s" : 'Your');
   const concern = document.getElementById('inp-concern')?.value || '';
-  let text = '[BirthCode] ' + nameLabel + ' Four Pillars Deep Reading\nQuestion: ' + concern + '\nDate: March 2026\n\n' + '='.repeat(30) + '\n\n';
+  let text = '[BirthCode] ' + nameLabel + ' Four Pillars Deep Reading\nQuestion: ' + concern + '\nDate: ' + TODAY_DATE_EN + '\n\n' + '='.repeat(30) + '\n\n';
   for (let i = 0; i < 9; i++) {
     const partTitle = document.querySelector('#part-card-' + i + ' .part-title-text')?.textContent || '';
     const partContent = document.getElementById('part-content-' + i)?.textContent || '';
