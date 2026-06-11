@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BirthCode — Decode Your Four Pillars</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
+<script src="https://www.paypal.com/sdk/js?client-id=BAAuViHIe6TntTPu6e41HHb_fDWlcpDKWxkcc3tAhRQjlI1H89Ns8MVP6otWhYoYFbKZ0CkunsezYOjiw8&currency=USD&intent=capture" defer></script>
 <style>
   :root {
     --bg: #0a0a0f; --bg2: #11111a; --bg3: #1a1a28;
@@ -391,6 +391,19 @@
       </div>
       <button class="btn-upsell-yes" onclick="acceptUpsell()">Upgrade to Soul Blueprint — $6.99</button>
       <button class="btn-upsell-no" onclick="declineUpsell()">No thanks, keep my Spark Reading</button>
+    </div>
+  </div>
+
+  <!-- PayPal 결제 모달 -->
+  <div id="paypal-overlay" class="upsell-overlay" style="display:none; align-items:center;">
+    <div class="upsell-modal" style="text-align:center;">
+      <div class="upsell-tag">✦ SECURE CHECKOUT</div>
+      <div class="upsell-title" style="margin-bottom:4px;"><span id="paypal-label">Soul Blueprint</span></div>
+      <div class="upsell-price-row" style="justify-content:center; margin:8px 0 18px;">
+        <div class="upsell-price-now" id="paypal-amount">$9.99</div>
+      </div>
+      <div id="paypal-button-container"></div>
+      <button class="btn-upsell-no" onclick="closePayPalOverlay()" style="margin-top:14px;">Cancel</button>
     </div>
   </div>
 
@@ -975,38 +988,14 @@ function animateLoading() {
   window._loadingInterval = setInterval(() => { i = (i+1) % loadingTexts.length; el.textContent = loadingTexts[i]; }, 1800);
 }
 
-// ==================== 결제 (Lemon Squeezy) ====================
-const LS_URL_SPARK  = 'https://birth-code.lemonsqueezy.com/checkout/buy/a695a019-653a-480d-b6e6-ea5084ab5e64'; // $2.99 Spark Reading
-const LS_URL_UNLOCK = 'https://birth-code.lemonsqueezy.com/checkout/buy/6d31ceac-5b5f-48ae-ad8e-4517e775a289'; // $6.99 Blueprint Unlocked
-const LS_URL_SOUL   = 'https://birth-code.lemonsqueezy.com/checkout/buy/314a64a1-7d70-4e78-98c2-75722a09f4fb'; // $9.99 Soul Blueprint
+// ==================== 결제 (PayPal Direct) ====================
+const TIER_INFO = {
+  spark:  { amount: '2.99', label: 'BirthCode — Spark Reading' },
+  soul:   { amount: '9.99', label: 'BirthCode — Soul Blueprint' },
+  unlock: { amount: '6.99', label: 'BirthCode — Blueprint Unlocked' },
+};
 
 let currentTier = 'soul'; // 'spark' | 'soul' | 'unlock'
-
-window.addEventListener('DOMContentLoaded', function() {
-  // Lemon Squeezy 초기화 및 이벤트 리스너
-  if (window.createLemonSqueezy) window.createLemonSqueezy();
-  window.addEventListener('message', function(e) {
-    if (e.data && e.data.event === 'Checkout.Success') {
-      const tier = sessionStorage.getItem('pending_tier') || 'soul';
-      const savedState = sessionStorage.getItem('pending_payment_state');
-      if (savedState) { try { Object.assign(state, JSON.parse(savedState)); } catch(err) {} }
-      if (window.LemonSqueezy) LemonSqueezy.Url.Close();
-      proceedToAnalysis(tier);
-    } else if (e.data && e.data.event === 'Checkout.Close') {
-      document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(function(b) { b.disabled = false; });
-    }
-  });
-
-  // URL 파라미터 결제 성공 처리 (fallback)
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('ls_success') === '1') {
-    history.replaceState({}, '', window.location.pathname);
-    const savedState = sessionStorage.getItem('pending_payment_state');
-    if (savedState) { try { Object.assign(state, JSON.parse(savedState)); } catch(e) {} }
-    const savedTier = sessionStorage.getItem('pending_tier') || 'soul';
-    proceedToAnalysis(savedTier);
-  }
-});
 
 async function startPremium() {
   await startPremiumWith('soul');
@@ -1014,13 +1003,12 @@ async function startPremium() {
 
 async function startPremiumWith(tier) {
   currentTier = tier;
-  const url = tier === 'spark' ? LS_URL_SPARK : LS_URL_SOUL;
-  await requestLSPayment(url, tier);
+  requestPayPalPayment(tier);
 }
 
 async function acceptUpsell() {
   document.getElementById('upsell-overlay').style.display = 'none';
-  await requestLSPayment(LS_URL_UNLOCK, 'unlock');
+  requestPayPalPayment('unlock');
 }
 
 function declineUpsell() {
@@ -1028,27 +1016,70 @@ function declineUpsell() {
   proceedToAnalysis('spark');
 }
 
-async function requestLSPayment(checkoutUrl, tier) {
+function savePendingState(tier) {
   sessionStorage.setItem('pending_payment_state', JSON.stringify({
     name: state.name, year: state.year, month: state.month, day: state.day,
     hour: state.hour, gender: state.gender, concern: state.concern, sajuInfo: state.sajuInfo
   }));
   sessionStorage.setItem('pending_tier', tier);
-  document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(b => { b.disabled = true; });
+}
 
-  const fullUrl = checkoutUrl + '?checkout[success_url]=' + encodeURIComponent(window.location.origin + window.location.pathname + '?ls_success=1');
+function setPricingButtonsDisabled(disabled) {
+  document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(b => { b.disabled = disabled; });
+}
 
-  try {
-    if (window.LemonSqueezy) {
-      LemonSqueezy.Url.Open(fullUrl);
-    } else {
-      window.location.href = fullUrl;
-    }
-  } catch(e) {
-    console.error('LemonSqueezy error:', e);
-    showPaymentError('Something went wrong with payment. Please try again.');
-    document.querySelectorAll('.btn-select-soul, .btn-select-spark, .btn-upsell-yes, .btn-upsell-banner').forEach(b => { b.disabled = false; });
+function closePayPalOverlay() {
+  const ov = document.getElementById('paypal-overlay');
+  if (ov) ov.style.display = 'none';
+  setPricingButtonsDisabled(false);
+}
+
+function requestPayPalPayment(tier) {
+  const info = TIER_INFO[tier] || TIER_INFO.soul;
+  currentTier = tier;
+  savePendingState(tier);
+  setPricingButtonsDisabled(true);
+
+  if (!window.paypal || !window.paypal.Buttons) {
+    showPaymentError('Payment is still loading. Please try again in a moment.');
+    setPricingButtonsDisabled(false);
+    return;
   }
+
+  const overlay = document.getElementById('paypal-overlay');
+  const container = document.getElementById('paypal-button-container');
+  document.getElementById('paypal-amount').textContent = '$' + info.amount;
+  document.getElementById('paypal-label').textContent = info.label.replace('BirthCode — ', '');
+  container.innerHTML = '';
+  overlay.style.display = 'flex';
+
+  paypal.Buttons({
+    style: { layout: 'vertical', color: 'gold', shape: 'pill', label: 'paypal' },
+    createOrder: function(data, actions) {
+      return actions.order.create({
+        intent: 'CAPTURE',
+        purchase_units: [{
+          description: info.label,
+          amount: { value: info.amount, currency_code: 'USD' }
+        }]
+      });
+    },
+    onApprove: function(data, actions) {
+      return actions.order.capture().then(function() {
+        const ov = document.getElementById('paypal-overlay');
+        if (ov) ov.style.display = 'none';
+        proceedToAnalysis(tier);
+      });
+    },
+    onCancel: function() {
+      closePayPalOverlay();
+    },
+    onError: function(err) {
+      console.error('PayPal error:', err);
+      closePayPalOverlay();
+      showPaymentError('Something went wrong with payment. Please try again.');
+    }
+  }).render('#paypal-button-container');
 }
 
 
