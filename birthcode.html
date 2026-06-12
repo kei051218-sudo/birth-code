@@ -5,7 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BirthCode — Decode Your Four Pillars</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://www.paypal.com/sdk/js?client-id=BAAuViHIe6TntTPu6e41HHb_fDWlcpDKWxkcc3tAhRQjlI1H89Ns8MVP6otWhYoYFbKZ0CkunsezYOjiw8&currency=USD&intent=capture" defer></script>
+<script>
+  // ===== PayPal 환경 설정: 'sandbox'(테스트) / 'live'(실결제) — 이 한 줄만 바꾸면 전환 =====
+  window.PAYPAL_ENV = 'sandbox';
+  window.PAYPAL_CLIENT_IDS = {
+    sandbox: 'AfKNUnU6x-ifBPSkTlD2p_soXci9woNdSAciSLMxpNXeHLa0q8-PJevHyIP2HNcIpXQaFI6y28heEd_I',
+    live:    'BAAuViHIe6TntTPu6e41HHb_fDWlcpDKWxkcc3tAhRQjlI1H89Ns8MVP6otWhYoYFbKZ0CkunsezYOjiw8'
+  };
+  (function () {
+    var cid = window.PAYPAL_CLIENT_IDS[window.PAYPAL_ENV];
+    var s = document.createElement('script');
+    s.src = 'https://www.paypal.com/sdk/js?client-id=' + cid + '&currency=USD&intent=capture';
+    s.defer = true;
+    document.head.appendChild(s);
+  })();
+</script>
 <style>
   :root {
     --bg: #0a0a0f; --bg2: #11111a; --bg3: #1a1a28;
