@@ -1093,13 +1093,16 @@ function requestPayPalPayment(tier) {
         proceedToAnalysis(tier);
       });
     },
-    onCancel: function() {
+    onCancel: function(data) {
+      console.warn('PayPal cancelled:', data);
       closePayPalOverlay();
+      showPaymentError('Payment was cancelled. (orderID: ' + (data && data.orderID ? data.orderID : 'n/a') + ')');
     },
     onError: function(err) {
       console.error('PayPal error:', err);
       closePayPalOverlay();
-      showPaymentError('Something went wrong with payment. Please try again.');
+      var msg = (err && err.message) ? err.message : String(err);
+      showPaymentError('Payment error: ' + msg);
     }
   }).render('#paypal-button-container');
 }
