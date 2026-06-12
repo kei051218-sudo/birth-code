@@ -1069,17 +1069,25 @@ function requestPayPalPayment(tier) {
 
   paypal.Buttons({
     style: { layout: 'vertical', color: 'gold', shape: 'pill', label: 'paypal' },
-    createOrder: function(data, actions) {
-      return actions.order.create({
-        intent: 'CAPTURE',
-        purchase_units: [{
-          description: info.label,
-          amount: { value: info.amount, currency_code: 'USD' }
-        }]
+    createOrder: function() {
+      // 주문 생성은 서버에서 (금액도 서버가 결정)
+      return fetch('/api/paypal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create', tier: tier })
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (!d.id) throw new Error(d.error || 'create-order failed');
+        return d.id;
       });
     },
-    onApprove: function(data, actions) {
-      return actions.order.capture().then(function() {
+    onApprove: function(data) {
+      // 캡처 + 결제 검증을 서버에서 수행
+      return fetch('/api/paypal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'capture', orderID: data.orderID, tier: tier })
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (!d.ok) throw new Error(d.error || 'payment not verified');
         const ov = document.getElementById('paypal-overlay');
         if (ov) ov.style.display = 'none';
         proceedToAnalysis(tier);
